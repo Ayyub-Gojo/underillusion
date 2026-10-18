@@ -1,0 +1,63 @@
+UNDERILLUSION – fabriquer l’APK (Android) et l’IPA (iPhone)
+==============================================================
+
+Ce dossier est un projet d’appli mobile prêt à compiler. La compilation
+se fait gratuitement sur GitHub (leurs serveurs ont les outils Android
+et un Mac pour iOS). Tu n’as rien à installer sur ton ordinateur.
+
+1) METTRE LE PROJET SUR GITHUB
+   - Crée un compte gratuit sur https://github.com
+   - Bouton « New » → nom : underillusion → Public → « Create repository »
+   - Clique sur « uploading an existing file », glisse TOUT le contenu
+     de ce dossier (pas le dossier lui-même), puis « Commit changes ».
+   - Le dossier caché « .github » est parfois ignoré par le navigateur.
+     Vérifie qu’il apparaît dans la liste. Sinon :
+     « Add file » → « Create new file », tape comme nom
+       .github/workflows/build.yml
+     colle le contenu du fichier workflow-build.yml, puis « Commit ».
+
+2) RÉCUPÉRER LES APPLIS
+   - Onglet « Actions » : « Construire les applis » se lance tout seul
+     (sinon : clique dessus puis « Run workflow »). Compte 5 à 15 min.
+   - Quand c’est vert, ouvre l’exécution : en bas, dans « Artifacts » :
+       underillusion-android → contient underillusion.apk
+       underillusion-ios     → contient underillusion.ipa
+
+3) INSTALLER SUR ANDROID
+   - Envoie l’APK sur le téléphone et ouvre-le.
+   - Autorise « Installer des applis inconnues » quand Android le demande.
+
+4) INSTALLER SUR IPHONE
+   Apple n’accepte que les applis signées. L’IPA fournie n’est pas
+   signée : il faut la signer au moment de l’installer.
+   a) Gratuit, avec ton identifiant Apple : Sideloadly (Windows/Mac)
+      ou AltStore. Branche l’iPhone à l’ordinateur, glisse l’IPA,
+      connecte-toi avec ton identifiant Apple. Active ensuite le
+      « Mode développeur » sur l’iPhone (Réglages → Confidentialité
+      et sécurité). Limite d’Apple : l’appli expire au bout de 7 jours,
+      il faut la réinstaller.
+   b) Sans limite, et pour la mettre sur l’App Store ou TestFlight :
+      compte Apple Developer (99 €/an) et un Mac avec Xcode.
+   c) Le plus simple pour tes potes sur iPhone : la version web
+      installée depuis Safari (« Sur l’écran d’accueil »), avec le zip
+      underillusion-app. Elle fait la même chose, rooms comprises.
+
+5) METTRE À JOUR L’APPLI
+   Remplace www/index.html sur GitHub : les applis se recompilent
+   toutes seules dans l’onglet Actions.
+
+PUBLICITÉS
+   L’appli affiche des pubs Google AdMob (identifiants de test pour
+   l’instant). Tout est expliqué dans PUBS.txt.
+
+PUBLIER SUR LE PLAY STORE
+   Tout est expliqué dans PLAY-STORE.txt (la compilation signée est
+   déjà prête, il suffit d’ajouter ta clé), avec les textes et visuels
+   de la fiche dans le dossier store/.
+
+À SAVOIR
+   - Rooms en ligne : APK, IPA et version web téléchargée peuvent
+     jouer ensemble (même système de connexion). Seule la version
+     sur claude.ai reste à part.
+   - Identifiant de l’appli : fr.underillusion.app
+     (modifiable dans capacitor.config.json avant la première version).

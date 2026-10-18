@@ -1,0 +1,120 @@
+PUBLIER UNDERILLUSION SUR LE PLAY STORE
+=======================================
+
+Compte environ 3 semaines au total, à cause du test obligatoire de 14 jours.
+
+ÉTAPE 0 – CE QU’IL TE FAUT
+• Un compte Google et 25 $ (paiement unique) pour Google Play Console :
+  https://play.google.com/console/signup → choisis « Compte personnel ».
+• Une pièce d’identité : Google vérifie ton identité (quelques jours).
+• Un téléphone Android : Google demande de prouver que tu en as un,
+  via l’appli Play Console.
+• Le projet déjà sur GitHub (voir LISEZ-MOI.txt).
+
+ÉTAPE 1 – POLITIQUE DE CONFIDENTIALITÉ (obligatoire)
+• La page est déjà remplie (éditeur AyyubDev, contact ayyub.bdx@gmail.com).
+• Mets le dossier de l’appli web (underillusion-app) en ligne sur
+  Netlify (voir son LISEZ-MOI).
+• L’adresse à donner à Google sera :
+  https://underillusion.netlify.app/politique-confidentialite.html
+
+ÉTAPE 2 – CRÉER TA CLÉ DE SIGNATURE (une seule fois)
+Google n’accepte que des applis signées. Tout se fait dans le navigateur :
+1. Sur ton dépôt GitHub : bouton vert « Code » → onglet « Codespaces »
+   → « Create codespace on main ». Un éditeur s’ouvre avec un terminal en bas.
+2. Colle cette commande dans le terminal, puis Entrée :
+     keytool -genkeypair -v -keystore upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
+   Choisis un mot de passe solide (6 caractères minimum, note-le !)
+   et réponds aux questions (ton nom suffit, Entrée pour le reste,
+   puis « oui » ou « yes » pour confirmer).
+3. Puis cette commande :
+     base64 -w 0 upload.jks > upload.b64
+4. Dans la liste des fichiers à gauche, clic droit sur upload.jks
+   → « Download ». GARDE CE FICHIER ET SON MOT DE PASSE PRÉCIEUSEMENT
+   (clé USB, cloud perso). Sans eux, tu ne pourras plus publier de
+   mise à jour sans passer par le support Google.
+5. Ouvre upload.b64 et copie tout son contenu (une longue ligne).
+
+ÉTAPE 3 – DONNER LA CLÉ À GITHUB
+Sur le dépôt : Settings → Secrets and variables → Actions
+→ « New repository secret ». Crée ces 4 secrets :
+   ANDROID_KEYSTORE_BASE64   → le contenu de upload.b64
+   ANDROID_KEYSTORE_PASSWORD → ton mot de passe
+   ANDROID_KEY_ALIAS         → upload
+   ANDROID_KEY_PASSWORD      → le même mot de passe
+Ensuite, dans le terminal du codespace : rm upload.jks upload.b64
+(ils ne sont de toute façon jamais envoyés sur GitHub), puis ferme
+et supprime le codespace (menu Codespaces → Delete).
+
+ÉTAPE 4 – FABRIQUER LE FICHIER POUR GOOGLE
+Onglet Actions → « Construire les applis » → « Run workflow ».
+À la fin, dans Artifacts : underillusion-playstore-aab
+→ contient underillusion-playstore.aab (c’est ce fichier qu’on envoie
+à Google, pas l’APK). Chaque nouvelle compilation augmente toute seule
+le numéro de version, comme Google l’exige.
+
+ÉTAPE 5 – CRÉER L’APPLI DANS PLAY CONSOLE
+« Créer une application » : nom UnderIllusion, langue Français,
+Jeu, Gratuit, coche les déclarations.
+Puis le tableau de bord te guide. Réponses conseillées :
+• Politique de confidentialité → l’adresse de l’étape 1
+• Accès à l’appli → tout est accessible sans identifiants
+• Annonces → OUI, l’appli contient des annonces (voir PUBS.txt)
+• Classification du contenu → remplis le questionnaire honnêtement
+  (jeu d’ambiance, pas de violence, pas de contenu choquant).
+  Les joueurs communiquent ? Non : seuls des pseudos s’affichent,
+  sans messagerie.
+• Public cible → choisis « 13 ans et plus ». Viser les moins de 13 ans
+  impose les règles « Familles », beaucoup plus strictes.
+• Sécurité des données → à cause des pubs AdMob, il faut déclarer
+  des données collectées. En général, pour AdMob :
+    - Position approximative (déduite de l’adresse IP)
+    - Activité dans l’appli (interactions avec les pubs)
+    - Infos et performances de l’appli (plantages, diagnostics)
+    - Identifiants de l’appareil (identifiant publicitaire)
+  Finalités : publicité ou marketing, statistiques, prévention des
+  fraudes et sécurité. Données chiffrées pendant le transfert : Oui.
+  Le jeu lui-même ne stocke rien sur un serveur : les pseudos et
+  l’état de la partie circulent chiffrés entre les téléphones.
+  Vérifie la page de Google « Données collectées par le SDK Google
+  Mobile Ads » : c’est toi l’éditeur, c’est à toi de répondre juste.
+• Coordonnées du développeur → ajoute https://underillusion.netlify.app
+  comme site web (indispensable pour le fichier app-ads.txt).
+• Appli d’actualités, santé, finance, gouvernement → Non
+• Fiche Play Store principale → textes et images du dossier store/
+  (voir store/FICHE-PLAY-STORE.txt)
+
+ÉTAPE 6 – LE TEST FERMÉ (obligatoire pour les nouveaux comptes)
+• Tests → Test fermé → créer une piste → « Créer une release »
+  → importe underillusion-playstore.aab.
+• Accepte « Signature d’application Play » (Google garde la clé finale ;
+  ta clé d’envoi peut être réinitialisée si tu la perds).
+• Testeurs : ajoute au moins 12 adresses Gmail, mieux 15 à 20 au cas où
+  certains décrochent.
+• Envoie-leur le lien d’inscription : ils doivent accepter, installer
+  l’appli et la GARDER pendant 14 jours d’affilée. Si vous tombez sous
+  12 inscrits, le compteur repart à zéro.
+• Publie une petite mise à jour pendant le test, et demande-leur de
+  jouer de temps en temps : Google regarde si l’appli a vraiment été testée.
+
+ÉTAPE 7 – PASSER EN PRODUCTION
+Avant la version de production, mets "useTestAds": false dans
+ads.json (voir PUBS.txt), puis recompile.
+
+Après les 14 jours, Play Console propose « Demander l’accès à la
+production ». Réponds au questionnaire (qui a testé, ce que tu as
+corrigé). Une fois accepté : Production → Créer une release → importe
+le dernier .aab → Envoyer pour examen. L’examen prend en général
+quelques jours.
+
+MISES À JOUR
+Modifie www/index.html sur GitHub, attends la compilation, et importe
+le nouveau .aab dans Play Console (Production → Créer une release).
+
+⚠️ RISQUE DE REFUS
+• L’icône reprend une silhouette de personnage connu : c’est la cause
+  de refus la plus probable. Si Google la refuse pour propriété
+  intellectuelle, il faudra une icône originale.
+• Le contenu cite des noms de personnages d’anime : beaucoup de quiz
+  de fans le font, mais Google peut toujours le contester si un ayant
+  droit se plaint.

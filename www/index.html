@@ -1,0 +1,1488 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0F0C1D">
+<title>UnderIllusion</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="UnderIllusion">
+<style>
+@font-face{font-family:"Dela Gothic One";src:url(fonts/dela-gothic-one-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Zen Kaku Gothic New";src:url(fonts/zen-kaku-gothic-new-latin-400-normal.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Zen Kaku Gothic New";src:url(fonts/zen-kaku-gothic-new-latin-700-normal.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Zen Kaku Gothic New";src:url(fonts/zen-kaku-gothic-new-latin-900-normal.woff2) format("woff2");font-weight:900;font-display:swap}
+</style>
+<style>
+:root{
+  --bg:#0F0C1D; --bg2:#171230; --surface:#221B3D; --surface2:#2C2450; --line:#3D3366;
+  --ink:#F4F1FF; --muted:#A39CC7; --accent:#FF3D7F; --accent-ink:#FFFFFF;
+  --cyan:#3DE0FF; --pop:#FFD15C; --ok:#3CCB97; --dot:rgba(255,255,255,.07);
+  color-scheme:dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#EDEBF7; --bg2:#E1DCF3; --surface:#FFFFFF; --surface2:#F3F0FC; --line:#CDC5EA;
+    --ink:#1A1533; --muted:#5F5784; --accent:#E5246A; --accent-ink:#FFFFFF;
+    --cyan:#0790B5; --pop:#C98A00; --ok:#11885F; --dot:rgba(26,21,51,.08);
+    color-scheme:light;
+  }
+}
+:root[data-theme="light"]{
+  --bg:#EDEBF7; --bg2:#E1DCF3; --surface:#FFFFFF; --surface2:#F3F0FC; --line:#CDC5EA;
+  --ink:#1A1533; --muted:#5F5784; --accent:#E5246A; --accent-ink:#FFFFFF;
+  --cyan:#0790B5; --pop:#C98A00; --ok:#11885F; --dot:rgba(26,21,51,.08);
+  color-scheme:light;
+}
+:root[data-theme="dark"]{
+  --bg:#0F0C1D; --bg2:#171230; --surface:#221B3D; --surface2:#2C2450; --line:#3D3366;
+  --ink:#F4F1FF; --muted:#A39CC7; --accent:#FF3D7F; --accent-ink:#FFFFFF;
+  --cyan:#3DE0FF; --pop:#FFD15C; --ok:#3CCB97; --dot:rgba(255,255,255,.07);
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+html,body{margin:0;min-height:100%}
+body{
+  background:var(--bg);color:var(--ink);
+  background-image:radial-gradient(var(--dot) 1.3px,transparent 1.5px);background-size:12px 12px;
+  font-family:"Zen Kaku Gothic New",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.5;-webkit-tap-highlight-color:transparent;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.disp{font-family:"Dela Gothic One","Arial Black",Impact,sans-serif;font-weight:400}
+h2{font-family:"Dela Gothic One","Arial Black",sans-serif;font-weight:400;font-size:1.25rem;margin:0;line-height:1.15}
+p{margin:0 0 10px}
+.muted{color:var(--muted)}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none;padding:0}
+button:focus-visible,input:focus-visible,label:focus-within{outline:3px solid var(--cyan);outline-offset:2px}
+.cut{clip-path:polygon(14px 0,100% 0,100% calc(100% - 14px),calc(100% - 14px) 100%,0 100%,0 14px)}
+.cut-s{clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)}
+
+/* HUD du haut */
+.hud{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:9;
+  display:flex;align-items:center;gap:10px;padding:10px 16px;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.hud .t{font-family:"Dela Gothic One",sans-serif;font-size:1.05rem;line-height:1;margin-right:auto;white-space:nowrap}
+.hud .t span{color:var(--accent)}
+.pill{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--line);padding:4px 10px;border-radius:999px;font-weight:900;font-size:.85rem;white-space:nowrap}
+.pill.hot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.icon-btn{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:var(--surface);border:1px solid var(--line);font-size:1rem}
+
+.wrap{max-width:560px;margin:0 auto;padding:16px 16px calc(110px + var(--ad-h,0px) + env(safe-area-inset-bottom,0px))}
+.wrap.ingame{padding-bottom:40px}
+
+/* Barre d’onglets */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:var(--ad-h,0px);z-index:9;
+  padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));
+  background:color-mix(in srgb,var(--bg2) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);display:flex;justify-content:center;
+}
+.tabbar[hidden]{display:none}
+.tabbar .in{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;max-width:560px}
+.tab{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 4px;border-radius:14px;font-weight:900;font-size:.78rem;color:var(--muted)}
+.tab .i{font-size:1.35rem;line-height:1;filter:grayscale(1);opacity:.7}
+.tab[aria-current="page"]{color:var(--ink);background:var(--surface)}
+.tab[aria-current="page"] .i{filter:none;opacity:1}
+
+/* Bannière */
+.banner{
+  position:relative;overflow:hidden;padding:22px 18px 18px;margin-bottom:22px;
+  background:linear-gradient(120deg,var(--accent),#7B3DFF 70%,var(--cyan));color:#fff;
+}
+.banner::before{
+  content:"";position:absolute;inset:-60%;
+  background:repeating-conic-gradient(from 0deg at 85% 30%,rgba(255,255,255,.16) 0deg 3deg,transparent 3deg 11deg);
+}
+.banner>*{position:relative}
+.banner h1{font-family:"Dela Gothic One",sans-serif;font-weight:400;font-size:clamp(2.3rem,11vw,3.2rem);line-height:.92;margin:0;text-shadow:3px 3px 0 rgba(0,0,0,.25)}
+.banner p{margin:10px 0 0;font-weight:700;opacity:.95}
+.banner .stats{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.banner .pill{background:rgba(0,0,0,.25);border-color:rgba(255,255,255,.3);color:#fff}
+
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:22px 0 10px}
+.hint{color:var(--muted);font-size:.88rem}
+.warn{color:var(--accent);font-weight:900;font-size:.92rem;margin-top:10px}
+
+/* Avatars */
+.ava{
+  --c:var(--accent);flex:none;display:grid;place-items:center;width:44px;height:44px;font-size:1.4rem;
+  background:color-mix(in srgb,var(--c) 30%,var(--surface2));
+  border:2px solid var(--c);border-radius:14px;
+}
+.ava.lg{width:96px;height:96px;font-size:3rem;border-radius:26px;border-width:3px}
+
+/* Sélection des joueurs */
+.roster{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:10px}
+.ptile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;border-radius:16px;background:var(--surface);border:2px solid transparent;font-weight:900;font-size:.85rem;position:relative;min-width:0}
+.ptile .nm{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 4px}
+.ptile[aria-pressed="false"]{opacity:.5}
+.ptile[aria-pressed="false"] .ava{filter:grayscale(.8)}
+.ptile[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
+.ptile[aria-pressed="true"]::after{content:"✓";position:absolute;top:6px;right:8px;color:var(--accent);font-weight:900}
+.ptile.add{border:2px dashed var(--line);opacity:1;color:var(--muted)}
+.ptile.add .ava{background:transparent;border-style:dashed;border-color:var(--line)}
+
+/* Steppers rôles */
+.roles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rbox{background:var(--surface);padding:12px;border-radius:16px}
+.rbox .lbl{font-weight:900;display:flex;align-items:center;gap:6px}
+.rbox .ctrl{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.rbox .v{font-family:"Dela Gothic One",sans-serif;font-size:1.6rem;line-height:1}
+.sbtn{width:38px;height:38px;border-radius:12px;background:var(--surface2);border:1px solid var(--line);font-weight:900;font-size:1.2rem}
+.sbtn[disabled]{opacity:.35}
+
+/* Boutons */
+.cta{
+  display:block;width:100%;margin-top:22px;padding:16px;
+  font-family:"Dela Gothic One",sans-serif;font-size:1.2rem;letter-spacing:.02em;
+  background:var(--accent);color:var(--accent-ink);
+  box-shadow:0 6px 0 color-mix(in srgb,var(--accent) 55%,#000);border-radius:16px;
+  transition:transform .08s,box-shadow .08s;
+}
+.cta:active{transform:translateY(4px);box-shadow:0 2px 0 color-mix(in srgb,var(--accent) 55%,#000)}
+.cta[disabled]{opacity:.4;cursor:not-allowed}
+.cta.alt{background:var(--surface);color:var(--ink);box-shadow:0 6px 0 var(--line)}
+.cta+.cta{margin-top:14px}
+.ghost{display:block;width:100%;margin-top:14px;padding:12px;border-radius:14px;border:1px solid var(--line);font-weight:900;color:var(--muted)}
+
+/* Réglages */
+.group{background:var(--surface);border-radius:18px;overflow:hidden}
+.set{display:flex;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.set:last-child{border-bottom:0}
+.set .tx{flex:1;min-width:0}
+.set .tx b{display:block}
+.set .tx small{color:var(--muted);display:block;line-height:1.3}
+.sw{flex:none;width:50px;height:30px;border-radius:999px;background:var(--line);position:relative;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .15s}
+[aria-checked="true"] .sw{background:var(--ok)}
+[aria-checked="true"] .sw::after{transform:translateX(20px)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;background:var(--surface2);padding:4px;border-radius:14px}
+.seg button{padding:9px 6px;border-radius:10px;font-weight:900;font-size:.9rem;color:var(--muted)}
+.seg button[aria-checked="true"]{background:var(--accent);color:var(--accent-ink)}
+.set.col{flex-direction:column;align-items:stretch}
+
+.gtabs{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px;scrollbar-width:none}
+.gtabs::-webkit-scrollbar{display:none}
+.gtab{flex:none;display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:900;font-size:.9rem;white-space:nowrap}
+.gtab .c{font-size:.75rem;color:var(--muted);font-weight:700}
+.gtab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.gtab[aria-selected="true"] .c{color:inherit;opacity:.7}
+.ghead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px;background:var(--surface);border-radius:16px 16px 0 0;border-bottom:1px solid var(--line)}
+.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;background:var(--surface);padding:12px;border-radius:0 0 16px 16px}
+.tog{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:var(--surface2);border:2px solid transparent;cursor:pointer;font-weight:900;line-height:1.2;position:relative}
+.tog input{position:absolute;opacity:0;pointer-events:none}
+.tog .em{font-size:1.5rem;filter:grayscale(1);opacity:.45}
+.tog small{display:block;font-weight:400;font-size:.76rem;color:var(--muted)}
+.tog.on{border-color:var(--cyan)}
+.tog.on .em{filter:none;opacity:1}
+
+/* Profils */
+.plist{display:grid;gap:10px}
+.prow{display:flex;align-items:center;gap:12px;background:var(--surface);padding:12px;border-radius:18px}
+.prow .tx{flex:1;min-width:0}
+.prow .nm{font-weight:900;font-size:1.05rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.prow .st{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+.prow .st span{font-size:.76rem;font-weight:700;background:var(--surface2);padding:2px 8px;border-radius:999px;color:var(--muted)}
+.prow .st b{color:var(--ink)}
+.rank{font-family:"Dela Gothic One",sans-serif;color:var(--muted);width:22px;text-align:center}
+.prow.top .rank{color:var(--pop)}
+.empty{text-align:center;padding:30px 16px;background:var(--surface);border-radius:18px}
+
+/* Modale */
+.scrim{position:fixed;inset:0;z-index:30;background:rgba(5,3,14,.65);display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
+.sheet{width:100%;max-width:560px;background:var(--bg2);border-radius:24px 24px 0 0;padding:20px 18px calc(20px + env(safe-area-inset-bottom,0px));max-height:92vh;overflow:auto;animation:up .22s cubic-bezier(.2,.9,.3,1)}
+.sheet .grab{width:40px;height:5px;border-radius:9px;background:var(--line);margin:-6px auto 14px}
+@keyframes fade{from{opacity:0}}
+@keyframes up{from{transform:translateY(40px);opacity:.5}}
+.field{width:100%;font:inherit;font-weight:700;color:var(--ink);background:var(--surface);border:2px solid var(--line);padding:12px 14px;border-radius:14px}
+.field:focus{border-color:var(--cyan);outline:none}
+.egrid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.egrid button{aspect-ratio:1;border-radius:12px;background:var(--surface);font-size:1.4rem;border:2px solid transparent}
+.egrid button[aria-checked="true"]{border-color:var(--cyan);background:var(--surface2)}
+.cgrid{display:flex;gap:10px;flex-wrap:wrap}
+.cgrid button{width:38px;height:38px;border-radius:50%;background:var(--c);border:3px solid transparent}
+.cgrid button[aria-checked="true"]{border-color:var(--ink);box-shadow:0 0 0 2px var(--bg2) inset}
+.lbl2{font-weight:900;margin:16px 0 8px;display:block}
+.row2{display:flex;gap:10px;margin-top:18px}
+.row2>*{flex:1;margin:0!important}
+
+.linkbtn{color:var(--accent);font-weight:900;padding:4px 0}
+.backlink{font-weight:900;color:var(--muted);padding:4px 0;margin-bottom:4px}
+.mode-card{display:block;width:100%;text-align:left;background:var(--surface);border-radius:22px;padding:18px;margin-bottom:14px;position:relative;overflow:hidden}
+.mode-card .ic{font-size:2.2rem;line-height:1}
+.mode-card h3{font-family:"Dela Gothic One",sans-serif;font-weight:400;font-size:1.35rem;margin:10px 0 4px}
+.mode-card.online{background:linear-gradient(135deg,color-mix(in srgb,var(--cyan) 28%,var(--surface)) 0%,var(--surface) 70%)}
+.mode-card .acts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.btn-s{padding:13px 10px;border-radius:14px;font-weight:900;background:var(--accent);color:var(--accent-ink)}
+.btn-s.alt{background:var(--ink);color:var(--bg)}
+.codebox{text-align:center;padding:18px;background:var(--ink);color:var(--bg)}
+.codebox .lab{font-weight:900;font-size:.85rem;opacity:.7}
+.codebox .code{font-family:"Dela Gothic One",sans-serif;font-size:clamp(2.4rem,13vw,3.2rem);letter-spacing:.18em;line-height:1.1;margin:6px 0 8px;padding-left:.18em}
+.codebox .copy{font-weight:900;font-size:.85rem;padding:6px 14px;border-radius:999px;background:color-mix(in srgb,var(--bg) 18%,transparent)}
+.code-in{font-family:"Dela Gothic One",sans-serif;font-size:2rem;letter-spacing:.35em;text-align:center;text-transform:uppercase;padding-left:calc(14px + .35em)}
+.phone{background:var(--surface);border-radius:16px;padding:10px 12px;margin-bottom:8px;border:2px solid transparent}
+.phone.me{border-color:var(--cyan)}
+.phone .h{display:flex;justify-content:space-between;align-items:center;font-weight:900;font-size:.85rem;color:var(--muted);margin-bottom:8px}
+.phone .avs{display:flex;flex-wrap:wrap;gap:8px 14px}
+.phone .m{display:flex;align-items:center;gap:6px;font-weight:900;font-size:.92rem}
+.phone .m .ava{width:30px;height:30px;font-size:1rem;border-radius:9px}
+.waitbox{margin-top:18px;padding:14px;border-radius:16px;background:var(--surface);text-align:center;font-weight:900;color:var(--muted)}
+.order button[disabled]{cursor:default;opacity:1}
+
+/* Carte à retourner */
+.stage{perspective:1200px;margin:10px 0 24px}
+.flip{position:relative;height:380px;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.3,1.3,.5,1)}
+.flip.on{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px 18px;overflow:hidden}
+.back{background:var(--surface);}
+.back::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 14px,color-mix(in srgb,var(--accent) 12%,transparent) 14px 16px)}
+.front{transform:rotateY(180deg);background:linear-gradient(160deg,var(--surface2),var(--surface));}
+.front::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--cyan) 18%,transparent) 0deg 2deg,transparent 2deg 10deg)}
+.front.white::before{background:repeating-conic-gradient(from 0deg,color-mix(in srgb,var(--pop) 22%,transparent) 0deg 2deg,transparent 2deg 10deg)}
+.face>*{position:relative}
+.emblem{font-size:4.2rem;line-height:1;margin-bottom:12px;filter:drop-shadow(0 6px 10px rgba(0,0,0,.3))}
+.word{font-family:"Dela Gothic One",sans-serif;font-size:clamp(1.8rem,8.5vw,2.5rem);line-height:1.05;overflow-wrap:anywhere}
+.from{display:inline-block;margin-top:12px;font-weight:900;font-size:.85rem;background:var(--bg);padding:4px 12px;border-radius:999px;color:var(--muted)}
+.bigname{font-family:"Dela Gothic One",sans-serif;font-size:2rem;line-height:1.05;overflow-wrap:anywhere;margin-top:6px}
+.dots{display:flex;gap:6px;justify-content:center;margin-bottom:6px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--line)}
+.dots i.d{background:var(--accent)}
+.dots i.c{background:var(--ink);transform:scale(1.3)}
+@media (prefers-reduced-motion:reduce){.flip{transition:none}.sheet,.scrim{animation:none}}
+
+/* Partie */
+.timer{display:flex;align-items:center;gap:14px;background:var(--surface);padding:14px;border-radius:18px;margin-bottom:16px}
+.timer .clock{font-family:"Dela Gothic One",sans-serif;font-size:2.2rem;line-height:1;min-width:92px}
+.timer.low .clock{color:var(--accent)}
+.timer .bar{flex:1;height:8px;border-radius:9px;background:var(--surface2);overflow:hidden}
+.timer .bar i{display:block;height:100%;background:var(--cyan);transition:width 1s linear}
+.timer.low .bar i{background:var(--accent)}
+.order{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.order button{width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:var(--surface);padding:10px 12px;border-radius:16px;font-weight:900}
+.order button:active{background:var(--surface2)}
+.order .n{font-family:"Dela Gothic One",sans-serif;color:var(--muted);width:20px;text-align:center}
+.order .first .n{color:var(--accent)}
+.order .tag{margin-left:auto;font-size:.75rem;background:var(--accent);color:var(--accent-ink);padding:3px 9px;border-radius:999px}
+.order .vote{margin-left:auto;font-size:.8rem;color:var(--muted)}
+.order .first .vote{margin-left:8px}
+.out{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.out span{display:flex;align-items:center;gap:6px;background:var(--surface);padding:4px 10px 4px 4px;border-radius:999px;font-size:.85rem;font-weight:700;color:var(--muted)}
+.out .ava{width:26px;height:26px;font-size:.9rem;border-radius:8px;filter:grayscale(1)}
+
+.rolechip{display:inline-block;padding:4px 14px;border-radius:999px;font-weight:900}
+.rolechip.civil{background:var(--surface2);color:var(--ink)}
+.rolechip.uc{background:var(--accent);color:var(--accent-ink)}
+.rolechip.white{background:var(--pop);color:#1A1533}
+.result{background:var(--surface);padding:26px 18px;text-align:center;border-radius:22px;margin:10px 0 14px;position:relative;overflow:hidden}
+.result::before{content:"";position:absolute;inset:-50%;background:repeating-conic-gradient(from 0deg,var(--dot) 0deg 3deg,transparent 3deg 10deg)}
+.result>*{position:relative}
+.result .ava{margin:0 auto 10px}
+.recap{display:grid;gap:8px;margin-top:10px}
+.recap .r{display:flex;align-items:center;gap:10px;background:var(--surface);padding:8px 12px 8px 8px;border-radius:14px}
+.recap .r .nm{font-weight:900;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.recap .plus{color:var(--ok);font-weight:900}
+.words{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}
+.words div{background:var(--surface);border-radius:16px;padding:12px;text-align:center}
+.words b{display:block;font-family:"Dela Gothic One",sans-serif;font-weight:400;font-size:1.05rem;line-height:1.2;margin-top:4px;overflow-wrap:anywhere}
+.words .e{font-size:1.8rem}
+
+.rules{margin-top:22px;background:var(--surface);border-radius:16px;padding:4px 14px}
+.rules summary{font-weight:900;cursor:pointer;padding:10px 0}
+.rules ul{padding-left:18px;margin:0 0 12px;color:var(--muted)}
+.rules li{margin-bottom:6px}
+</style>
+<script src="peerjs.min.js"></script>
+<script src="ads-config.js" onerror="void 0"></script>
+</head>
+<body>
+<header class="hud" id="hud"></header>
+<main class="wrap" id="app"></main>
+<nav class="tabbar" id="tabbar" aria-label="Navigation"></nav>
+<div id="modal"></div>
+
+<script>
+const GENRES=[
+  {id:"shonen",name:"Shônen",e:"🔥"},{id:"sport",name:"Sport",e:"🏐"},{id:"isekai",name:"Isekai",e:"🌌"},
+  {id:"romance",name:"Romance",e:"💘"},{id:"drama",name:"Drama",e:"🥀"},{id:"dark",name:"Dark",e:"🕯️"},{id:"comedy",name:"Comédie",e:"😂"}
+];
+// n = paires normales, h = paires difficiles (persos secondaires, duos très proches)
+const ANIMES=[
+ {id:"db",g:"shonen",name:"Dragon Ball",e:"🐉",
+  n:[["Son Goku","Vegeta"],["Son Gohan","Trunks"],["Freezer","Cell"]],
+  h:[["Krilin","Yamcha"],["Piccolo","Dieu (Kami-sama)"],["Beerus","Whis"],["Majin Boo","Babidi"],["C-17","C-18"],["Goten","Trunks enfant"]]},
+ {id:"naruto",g:"shonen",name:"Naruto",e:"🍥",
+  n:[["Naruto Uzumaki","Sasuke Uchiwa"],["Itachi Uchiwa","Madara Uchiwa"],["Kakashi Hatake","Jiraiya"],["Sakura Haruno","Hinata Hyûga"],["Gaara","Neji Hyûga"]],
+  h:[["Kisame","Zabuza"],["Hidan","Kakuzu"],["Shikamaru","Asuma"],["Hashirama","Tobirama"],["Minato","Obito"],["Jiraiya","Orochimaru"],["Deidara","Sasori"],["Kabuto","Yamato"]]},
+ {id:"op",g:"shonen",name:"One Piece",e:"🏴‍☠️",
+  n:[["Monkey D. Luffy","Portgas D. Ace"],["Roronoa Zoro","Sanji"],["Nami","Nico Robin"],["Shanks","Barbe Blanche"],["Trafalgar Law","Eustass Kid"]],
+  h:[["Akainu","Kizaru"],["Aokiji","Fujitora"],["Usopp","Chopper"],["Franky","Brook"],["Marco","Jozu"],["Kaido","Big Mom"],["Crocodile","Doflamingo"],["Rayleigh","Gol D. Roger"]]},
+ {id:"ds",g:"shonen",name:"Demon Slayer",e:"👹",
+  n:[["Tanjirô Kamado","Zenitsu Agatsuma"],["Nezuko Kamado","Shinobu Kochô"],["Kyôjurô Rengoku","Tengen Uzui"],["Inosuke","Genya Shinazugawa"]],
+  h:[["Giyû Tomioka","Sabito"],["Muichirô Tokitô","Yuichirô Tokitô"],["Akaza","Dôma"],["Kokushibô","Yoriichi"],["Mitsuri Kanroji","Obanai Iguro"],["Gyômei Himejima","Sanemi Shinazugawa"]]},
+ {id:"jjk",g:"shonen",name:"Jujutsu Kaisen",e:"🌀",
+  n:[["Satoru Gojô","Ryômen Sukuna"],["Yûji Itadori","Megumi Fushiguro"]],
+  h:[["Kento Nanami","Aoi Tôdô"],["Maki Zen’in","Mai Zen’in"],["Tôji Fushiguro","Megumi Fushiguro"],["Suguru Getô","Kenjaku"],["Mahito","Jôgo"],["Nobara Kugisaki","Momo Nishimiya"]]},
+ {id:"mha",g:"shonen",name:"My Hero Academia",e:"💥",
+  n:[["Izuku Midoriya","Katsuki Bakugô"],["All Might","Endeavor"],["Shôto Todoroki","Tenya Iida"]],
+  h:[["Tomura Shigaraki","All For One"],["Hawks","Dabi"],["Mirio Togata","Tamaki Amajiki"],["Himiko Toga","Twice"],["Shôta Aizawa","Present Mic"],["Eijirô Kirishima","Denki Kaminari"]]},
+ {id:"hxh",g:"shonen",name:"Hunter x Hunter",e:"🃏",
+  n:[["Gon Freecss","Killua Zoldyck"],["Hisoka","Chrollo Lucifer"]],
+  h:[["Kurapika","Leorio"],["Meruem","Isaac Netero"],["Illumi Zoldyck","Milluki Zoldyck"],["Feitan","Phinks"],["Biscuit Krueger","Wing"]]},
+ {id:"aot",g:"shonen",name:"L’Attaque des Titans",e:"🧱",
+  n:[["Eren Jäger","Armin Arlert"],["Livaï","Erwin Smith"],["Mikasa Ackerman","Annie Leonhart"]],
+  h:[["Reiner Braun","Bertholdt Hoover"],["Zeke Jäger","Grisha Jäger"],["Hansi Zoe","Moblit Berner"],["Jean Kirstein","Marco Bott"],["Sasha Braus","Connie Springer"],["Ymir","Historia Reiss"]]},
+ {id:"fma",g:"shonen",name:"Fullmetal Alchemist",e:"⚗️",
+  n:[["Edward Elric","Alphonse Elric"],["Roy Mustang","Riza Hawkeye"]],
+  h:[["Envy","Lust"],["Scar","Kimblee"],["Hohenheim","Père"],["Winry Rockbell","Izumi Curtis"],["Alex Armstrong","Maes Hughes"]]},
+ {id:"opm",g:"shonen",name:"One Punch Man",e:"👊",
+  n:[["Saitama","Genos"]], h:[["Tatsumaki","Fubuki"],["Garou","Boros"],["Bang","Bomb"]]},
+ {id:"bleach",g:"shonen",name:"Bleach",e:"🦋",
+  n:[["Ichigo Kurosaki","Renji Abarai"],["Sôsuke Aizen","Byakuya Kuchiki"]],
+  h:[["Kisuke Urahara","Yoruichi"],["Kenpachi Zaraki","Yachiru"],["Gin Ichimaru","Kaname Tôsen"],["Grimmjow","Ulquiorra"],["Uryû Ishida","Sado Chad"]]},
+ {id:"csm",g:"shonen",name:"Chainsaw Man",e:"🪚",
+  n:[["Denji","Aki Hayakawa"],["Power","Makima"]], h:[["Kishibe","Quanxi"],["Himeno","Kobeni"],["Reze","Asa Mitaka"]]},
+ {id:"bc",g:"shonen",name:"Black Clover",e:"🍀",
+  n:[["Asta","Yuno"]], h:[["Noelle Silva","Mimosa Vermillion"],["Yami Sukehiro","Julius Novachrono"],["Luck Voltia","Magna Swing"]]},
+ {id:"drs",g:"shonen",name:"Dr. Stone",e:"🧪",
+  n:[["Senku","Chrome"]], h:[["Tsukasa","Hyôga"],["Gen Asagiri","Kohaku"]]},
+
+ {id:"haikyu",g:"sport",name:"Haikyû",e:"🏐",
+  n:[["Shôyô Hinata","Tobio Kageyama"],["Tetsurô Kuroo","Kenma Kozume"]],
+  h:[["Daichi Sawamura","Kôshi Sugawara"],["Tôru Oikawa","Hajime Iwaizumi"],["Kôtarô Bokuto","Keiji Akaashi"],["Yû Nishinoya","Ryûnosuke Tanaka"],["Kei Tsukishima","Tadashi Yamaguchi"],["Atsumu Miya","Osamu Miya"]]},
+ {id:"bluelock",g:"sport",name:"Blue Lock",e:"⚽",
+  n:[["Yoichi Isagi","Meguru Bachira"]], h:[["Rin Itoshi","Sae Itoshi"],["Seishirô Nagi","Reo Mikage"],["Shôei Barô","Hyôma Chigiri"]]},
+ {id:"kuroko",g:"sport",name:"Kuroko’s Basket",e:"🏀",
+  n:[["Tetsuya Kuroko","Taiga Kagami"]], h:[["Daiki Aomine","Ryôta Kise"],["Seijûrô Akashi","Shintarô Midorima"],["Atsushi Murasakibara","Teppei Kiyoshi"]]},
+ {id:"tsubasa",g:"sport",name:"Olive et Tom",e:"🥅",
+  n:[["Olivier Atton","Mark Landers"]], h:[["Thomas Price","Ed Warner"],["Ben Becker","Bruce Harper"]]},
+ {id:"slamdunk",g:"sport",name:"Slam Dunk",e:"🏆",
+  n:[["Hanamichi Sakuragi","Kaede Rukawa"]], h:[["Ryôta Miyagi","Hisashi Mitsui"],["Takenori Akagi","Akira Sendô"]]},
+ {id:"ippo",g:"sport",name:"Hajime no Ippo",e:"🥊",
+  n:[["Ippo Makunouchi","Mamoru Takamura"]], h:[["Ichirô Miyata","Takeshi Sendô"]]},
+
+ {id:"rezero",g:"isekai",name:"Re:Zero",e:"⏳",
+  n:[["Subaru Natsuki","Emilia"]], h:[["Rem","Ram"],["Beatrice","Roswaal"]]},
+ {id:"konosuba",g:"isekai",name:"Konosuba",e:"💧",
+  n:[["Kazuma","Aqua"]], h:[["Megumin","Darkness"],["Wiz","Yunyun"]]},
+ {id:"tensura",g:"isekai",name:"Moi, quand je me réincarne en Slime",e:"🫧",
+  n:[["Rimuru","Veldora"]], h:[["Benimaru","Shion"],["Shuna","Milim"]]},
+ {id:"overlord",g:"isekai",name:"Overlord",e:"💀",
+  n:[["Ainz Ooal Gown","Albedo"]], h:[["Shalltear","Demiurge"],["Cocytus","Sebas"]]},
+ {id:"mushoku",g:"isekai",name:"Mushoku Tensei",e:"🪄",
+  n:[["Rudeus","Roxy"]], h:[["Eris","Sylphiette"],["Paul","Ruijerd"]]},
+ {id:"shield",g:"isekai",name:"The Rising of the Shield Hero",e:"🛡️",
+  n:[["Naofumi","Raphtalia"]], h:[["Filo","Melty"]]},
+ {id:"sao",g:"isekai",name:"Sword Art Online",e:"🎮",
+  n:[["Kirito","Asuna"]], h:[["Klein","Agil"],["Sinon","Leafa"]]},
+
+ {id:"kaguya",g:"romance",name:"Kaguya-sama",e:"💌",
+  n:[["Kaguya Shinomiya","Miyuki Shirogane"]], h:[["Chika Fujiwara","Ai Hayasaka"],["Yû Ishigami","Miko Iino"]]},
+ {id:"horimiya",g:"romance",name:"Horimiya",e:"🌷",
+  n:[["Kyôko Hori","Izumi Miyamura"]], h:[["Tôru Ishikawa","Yuki Yoshikawa"]]},
+ {id:"toradora",g:"romance",name:"Toradora!",e:"🐯",
+  n:[["Taiga Aisaka","Ryûji Takasu"]], h:[["Minori Kushieda","Ami Kawashima"]]},
+ {id:"fruba",g:"romance",name:"Fruits Basket",e:"🍙",
+  n:[["Tôru Honda","Yuki Sôma"]], h:[["Kyô Sôma","Shigure Sôma"]]},
+ {id:"yourname",g:"romance",name:"Your Name",e:"☄️",
+  n:[["Taki","Mitsuha"]], h:[]},
+
+ {id:"frieren",g:"drama",name:"Frieren",e:"🌿",
+  n:[["Frieren","Himmel"]], h:[["Fern","Stark"],["Heiter","Eisen"]]},
+ {id:"violet",g:"drama",name:"Violet Evergarden",e:"✉️",
+  n:[["Violet Evergarden","Gilbert"]], h:[["Claudia Hodgins","Cattleya"]]},
+ {id:"aprl",g:"drama",name:"Your Lie in April",e:"🎻",
+  n:[["Kôsei Arima","Kaori Miyazono"]], h:[["Tsubaki Sawabe","Ryôta Watari"]]},
+ {id:"vinland",g:"drama",name:"Vinland Saga",e:"🪓",
+  n:[["Thorfinn","Askeladd"]], h:[["Thorkell","Canute"]]},
+ {id:"clannad",g:"drama",name:"Clannad",e:"🍡",
+  n:[["Tomoya Okazaki","Nagisa Furukawa"]], h:[["Kyô Fujibayashi","Tomoyo Sakagami"]]},
+
+ {id:"dn",g:"dark",name:"Death Note",e:"📓",
+  n:[["Light Yagami","L"],["Ryuk","Rem (Death Note)"]], h:[["Near","Mello"],["Misa Amane","Kiyomi Takada"],["Teru Mikami","Kiyomi Takada"],["Sôichirô Yagami","Watari"]]},
+ {id:"cg",g:"dark",name:"Code Geass",e:"♟️",
+  n:[["Lelouch","Suzaku"]], h:[["C.C.","Kallen"],["Schneizel","Charles zi Britannia"]]},
+ {id:"tg",g:"dark",name:"Tokyo Ghoul",e:"☕",
+  n:[["Ken Kaneki","Touka Kirishima"]], h:[["Rize Kamishiro","Eto"],["Shû Tsukiyama","Ayato Kirishima"],["Kôtarô Amon","Jûzô Suzuya"]]},
+ {id:"steins",g:"dark",name:"Steins;Gate",e:"🔬",
+  n:[["Rintarô Okabe","Kurisu Makise"]], h:[["Mayuri Shiina","Itaru Hashida"]]},
+
+ {id:"sxf",g:"comedy",name:"Spy x Family",e:"🥜",
+  n:[["Loid Forger","Yor Forger"]], h:[["Yuri Briar","Franky"],["Anya Forger","Damian Desmond"],["Fiona Frost","Sylvia Sherwood"]]},
+ {id:"gintama",g:"comedy",name:"Gintama",e:"🍓",
+  n:[["Gintoki Sakata","Toshirô Hijikata"]], h:[["Shinpachi Shimura","Kagura"]]},
+ {id:"saiki",g:"comedy",name:"Saiki Kusuo",e:"🔮",
+  n:[["Kusuo Saiki","Riki Nendô"]], h:[["Shun Kaidô","Kokomi Teruhashi"]]}
+];
+// Nouveaux animes
+ANIMES.push(
+ {id:"jojo",g:"shonen",name:"JoJo’s Bizarre Adventure",e:"⭐",
+  n:[["Jotaro Kujo","Joseph Joestar"],["Dio Brando","Kira Yoshikage"]],
+  h:[["Jonathan Joestar","Joseph Joestar"],["Giorno Giovanna","Bruno Bucciarati"],["Jean-Pierre Polnareff","Noriaki Kakyoin"],["Josuke Higashikata","Okuyasu Nijimura"]],
+  x:[["Mohammed Avdol","Iggy"],["Rohan Kishibe","Koichi Hirose"],["Guido Mista","Narancia Ghirga"],["Leone Abbacchio","Pannacotta Fugo"],["Robert E. O. Speedwagon","Will A. Zeppeli"]]},
+ {id:"fairy",g:"shonen",name:"Fairy Tail",e:"🧚",
+  n:[["Natsu Dragneel","Grey Fullbuster"],["Lucy Heartfilia","Erza Scarlet"]],
+  h:[["Gajeel Redfox","Laxus Dreyar"],["Wendy Marvell","Juvia Lockser"],["Mirajane Strauss","Lisanna Strauss"],["Happy","Carla"]],
+  x:[["Makarov Dreyar","Gildarts Clive"],["Jellal Fernandes","Zeref Dragneel"],["Sting Eucliffe","Rogue Cheney"],["Lyon Vastia","Elfman Strauss"]]},
+ {id:"solo",g:"shonen",name:"Solo Leveling",e:"🗝️",
+  n:[["Sung Jin-Woo","Cha Hae-In"]], h:[["Igris","Beru"],["Yoo Jin-Ho","Choi Jong-In"]], x:[["Go Gun-Hee","Baek Yoon-Ho"]]},
+ {id:"kaiju",g:"shonen",name:"Kaiju No. 8",e:"🦖",
+  n:[["Kafka Hibino","Reno Ichikawa"]], h:[["Mina Ashiro","Sôshirô Hoshina"],["Kikoru Shinomiya","Mina Ashiro"]], x:[]},
+ {id:"dandadan",g:"shonen",name:"Dandadan",e:"👽",
+  n:[["Momo Ayase","Okarun"]], h:[["Turbo Granny","Seiko Ayase"],["Aira Shiratori","Jiji"]], x:[]},
+ {id:"mob",g:"comedy",name:"Mob Psycho 100",e:"🥦",
+  n:[["Shigeo Kageyama","Arataka Reigen"]], h:[["Teruki Hanazawa","Ritsu Kageyama"],["Dimple","Ekubo"]], x:[["Shô Suzuki","Tôichirô Suzuki"]]},
+ {id:"komi",g:"romance",name:"Komi Can’t Communicate",e:"📝",
+  n:[["Shôko Komi","Hitohito Tadano"]], h:[["Najimi Osana","Ren Yamai"]], x:[]},
+ {id:"bocchi",g:"comedy",name:"Bocchi the Rock!",e:"🎸",
+  n:[["Hitori Gotô","Nijika Ijichi"]], h:[["Ryô Yamada","Ikuyo Kita"]], x:[["Seika Ijichi","Kikuri Hiroi"]]},
+ {id:"oshi",g:"drama",name:"Oshi no Ko",e:"🌟",
+  n:[["Aqua Hoshino","Ruby Hoshino"]], h:[["Kana Arima","Akane Kurokawa"],["Ai Hoshino","MEM-cho"]], x:[]},
+ {id:"bebop",g:"drama",name:"Cowboy Bebop",e:"🚀",
+  n:[["Spike Spiegel","Jet Black"]], h:[["Faye Valentine","Ed"],["Vicious","Julia"]], x:[]},
+ {id:"tpn",g:"dark",name:"The Promised Neverland",e:"🔢",
+  n:[["Emma","Norman"]], h:[["Ray","Norman"],["Isabella","Krone"],["Don","Gilda"]], x:[]},
+ {id:"monster",g:"dark",name:"Monster",e:"🩺",
+  n:[["Kenzô Tenma","Johan Liebert"]], h:[["Nina Fortner","Eva Heinemann"],["Inspecteur Lunge","Wolfgang Grimmer"]], x:[]}
+);
+// Persos en plus : n normal, h difficile, x expert (tertiaires)
+const EXTRA={
+ db:{n:[["Bulma","Chichi"]],
+  h:[["Raditz","Nappa"],["Zarbon","Dodoria"],["Tenshinhan","Chaozu"],["Capitaine Ginyu","Recoome"],["Goku Black","Zamasu"],["Jiren","Toppo"],["Broly","Paragus"]],
+  x:[["Yajirobe","Maître Karin"],["Tortue Géniale","Oolong"],["Mr Satan","Videl"],["Guldo","Jeice"],["Pan","Bra"],["Hit","Cabba"],["Champa","Vados"],["Bardock","Gine"],["C-16","C-19"],["Maître Kaio","Bubbles"]]},
+ naruto:{n:[["Rock Lee","Gaï Maito"]],
+  h:[["Pain","Konan"],["Kiba Inuzuka","Shino Aburame"],["Ino Yamanaka","Temari"],["Kankurô","Temari"],["Tsunade","Shizune"],["Danzô","Hiruzen Sarutobi"],["Kurenai","Anko"],["Iruka","Mizuki"],["Killer Bee","Raikage A"],["Sai","Yamato"],["Chôji Akimichi","Kiba Inuzuka"]],
+  x:[["Haku","Kimimaro"],["Suigetsu","Jûgo"],["Karin","Tayuya"],["Sakon","Jirôbô"],["Konohamaru","Udon"],["Kurama","Gyûki"],["Kaguya Ôtsutsuki","Hagoromo"],["Indra","Ashura"],["Ônoki","Mei Terumî"],["Yahiko","Nagato"],["Zetsu Blanc","Zetsu Noir"],["Rin Nohara","Kushina Uzumaki"],["Shisui Uchiwa","Izuna Uchiwa"],["Yagura","Utakata"]]},
+ op:{n:[["Sabo","Portgas D. Ace"]],
+  h:[["Boa Hancock","Yamato"],["Mihawk","Shanks"],["Garp","Sengoku"],["Smoker","Tashigi"],["Vivi","Shirahoshi"],["Rob Lucci","Kaku"],["Enel","Crocodile"],["Katakuri","King"],["Barbe Noire","Kaido"]],
+  x:[["Koby","Helmeppo"],["Bon Clay","Ivankov"],["Pell","Chaka"],["Bepo","Pekoms"],["Arlong","Hody Jones"],["Hachi","Jinbei"],["Baggy","Alvida"],["Kuro","Don Krieg"],["Caesar Clown","Vegapunk"],["Perona","Gecko Moria"],["Queen","Jack"],["Cracker","Smoothie"],["Kin’emon","Kanjûrô"],["Momonosuke","Kozuki Oden"],["Bartolomeo","Cavendish"],["Kalifa","Jabra"]]},
+ ds:{h:[["Kanao Tsuyuri","Aoi Kanzaki"],["Gyûtarô","Daki"],["Rui","Enmu"],["Sakonji Urokodaki","Jigorô Kuwajima"],["Tamayo","Yushirô"],["Muzan Kibutsuji","Kokushibô"]],
+  x:[["Murata","Gotô"],["Kaigaku","Nakime"],["Hantengu","Gyokko"],["Susamaru","Yahaba"],["Kagaya Ubuyashiki","Amane Ubuyashiki"],["Kotetsu","Hotaru Haganezuka"],["Sumi","Kiyo"],["Kanae Kochô","Kanao Tsuyuri"],["Kyôgai","Susamaru"]]},
+ jjk:{h:[["Yûta Okkotsu","Rika Orimoto"],["Toge Inumaki","Panda"],["Hanami","Dagon"],["Chôsô","Eso"],["Yuki Tsukumo","Tengen"],["Kinji Hakari","Kirara Hoshi"],["Satoru Gojô","Suguru Getô"]],
+  x:[["Atsuya Kusakabe","Utahime Iori"],["Mei Mei","Ui Ui"],["Naoya Zen’in","Naobito Zen’in"],["Noritoshi Kamo","Mechamaru"],["Kasumi Miwa","Momo Nishimiya"],["Hiromi Higuruma","Fumihiko Takaba"],["Kiyotaka Ijichi","Masamichi Yaga"],["Hajime Kashimo","Ryû Ishigori"],["Junpei Yoshino","Mahito"],["Uraume","Jôgo"]]},
+ mha:{h:[["Ochaco Uraraka","Tsuyu Asui"],["Momo Yaoyorozu","Kyôka Jirô"],["Overhaul","Stain"],["Minoru Mineta","Yûga Aoyama"],["Mirko","Mount Lady"],["Sir Nighteye","Gran Torino"]],
+  x:[["Hitoshi Shinsô","Neito Monoma"],["Itsuka Kendô","Ibara Shiozaki"],["Rikidô Satô","Kôji Kôda"],["Mashirao Ojiro","Hanta Sero"],["Tôru Hagakure","Mina Ashido"],["Fumikage Tokoyami","Mezô Shôji"],["Spinner","Mr. Compress"],["Kurogiri","Mr. Compress"],["Best Jeanist","Edgeshot"],["Fat Gum","Crimson Riot"],["Nejire Hadô","Mirio Togata"]]},
+ hxh:{h:[["Uvogin","Nobunaga"],["Machi","Pakunoda"],["Neferpitou","Shaiapouf"],["Ging Freecss","Pariston Hill"],["Knuckle","Shoot"],["Kite","Ging Freecss"]],
+  x:[["Menchi","Buhara"],["Tonpa","Bodoro"],["Kalluto","Alluka"],["Zeno Zoldyck","Silva Zoldyck"],["Morel","Knov"],["Komugi","Palm"],["Gotoh","Canary"],["Hanzo","Pokkle"],["Zushi","Wing"],["Shalnark","Kortopi"]]},
+ aot:{h:[["Pieck","Porco Galliard"],["Floch","Yelena"],["Gabi","Falco"],["Kenny Ackerman","Uri Reiss"],["Hannes","Keith Shadis"]],
+  x:[["Petra Ral","Oluo Bozado"],["Gunther","Erd"],["Nile Dok","Dot Pixis"],["Mike Zacharias","Nanaba"],["Marlo","Hitch"],["Onyankopon","Yelena"],["Frieda Reiss","Rod Reiss"],["Carla Jäger","Dina Fritz"],["Colt Grice","Falco"]]},
+ fma:{h:[["Ling Yao","Lan Fan"],["Olivier Armstrong","Alex Armstrong"],["Pride","King Bradley"],["Sloth","Gluttony"],["Greed","Ling Yao"]],
+  x:[["Maria Ross","Denny Brosh"],["Jean Havoc","Heymans Breda"],["Kain Fuery","Vato Falman"],["Yoki","Barry le Boucher"],["Mei Chang","Lan Fan"],["Gracia Hughes","Elicia Hughes"]]},
+ opm:{h:[["Bang (Silverfang)","Atomic Samurai"],["King","Mumen Rider"],["Sonic","Flashy Flash"],["Metal Bat","Child Emperor"]],
+  x:[["Puri-Puri Prisoner","Tank-Top Master"],["Drive Knight","Metal Knight"],["Zombieman","Watchdog Man"],["Pig God","Superalloy Darkshine"]]},
+ bleach:{h:[["Tôshirô Hitsugaya","Rangiku Matsumoto"],["Rukia Kuchiki","Orihime Inoue"],["Retsu Unohana","Isane Kotetsu"],["Mayuri Kurotsuchi","Nemu Kurotsuchi"],["Shunsui Kyôraku","Jûshirô Ukitake"],["Coyote Starrk","Lilynette"],["Nnoitra","Szayelaporro"]],
+  x:[["Ikkaku Madarame","Yumichika Ayasegawa"],["Izuru Kira","Shûhei Hisagi"],["Momo Hinamori","Izuru Kira"],["Kon","Don Kanonji"],["Ganju Shiba","Kûkaku Shiba"],["Shinji Hirako","Hiyori Sarugaki"],["Tier Halibel","Barragan"],["Yhwach","Jugram Haschwalth"]]},
+ csm:{h:[["Pochita","Nayuta"],["Angel Devil","Kobeni"],["Galgali","Beam"],["Katana Man","Akane Sawatari"]],
+  x:[["Hirofumi Yoshida","Kishibe"],["Fami","Yoru"],["Princi","Beam"]]},
+ bc:{h:[["Finral Roulacase","Gauche Adlai"],["Charmy Pappitson","Gordon Agrippa"],["Vanessa Enoteca","Grey"],["Licht","Patry"]],
+  x:[["Fuegoleon Vermillion","Nozel Silva"],["William Vangeance","Jack le Ripper"],["Dante Zogratis","Zenon Zogratis"],["Vanica Zogratis","Megicula"]]},
+ drs:{h:[["Suika","Kaseki"],["Taiju","Yuzuriha"],["Ukyô","Ryûsui"]],x:[["Kinrô","Ginrô"],["Magma","Mantle"],["François","Ryûsui"]]},
+ haikyu:{h:[["Wakatoshi Ushijima","Satori Tendô"],["Kiyoko Shimizu","Hitoka Yachi"],["Lev Haiba","Morisuke Yaku"],["Kenji Futakuchi","Takanobu Aone"],["Kiyoomi Sakusa","Motoya Komori"],["Keishin Ukai","Ittetsu Takeda"],["Asahi Azumane","Daichi Sawamura"]],
+  x:[["Hisashi Kinoshita","Kazuhito Narita"],["Chikara Ennoshita","Hisashi Kinoshita"],["Tsutomu Goshiki","Kenjirô Shirabu"],["Akira Kunimi","Yûtarô Kindaichi"],["Yûji Terushima","Suguru Daishô"],["Eita Semi","Kenjirô Shirabu"]]},
+ bluelock:{h:[["Rensuke Kunigami","Gin Gagamaru"],["Jinpachi Ego","Anri Teieri"],["Michael Kaiser","Alexis Ness"]],
+  x:[["Jingo Raichi","Gurimu Igarashi"],["Ryûsei Shidô","Oliver Aiku"],["Wataru Kuon","Gurimu Igarashi"]]},
+ kuroko:{x:[["Junpei Hyûga","Riko Aida"],["Kazunari Takao","Satsuki Momoi"],["Shûzô Nijimura","Shôgo Haizaki"]]},
+ slamdunk:{x:[["Ayako","Haruko Akagi"],["Kiminobu Kogure","Hisashi Mitsui"]]},
+ ippo:{x:[["Masaru Aoki","Tatsuya Kimura"]]},
+ rezero:{h:[["Otto Suwen","Garfiel"],["Puck","Beatrice"]],
+  x:[["Petelgeuse","Regulus"],["Crusch Karsten","Felix Argyle"],["Reinhard","Wilhelm"],["Elsa Granhiert","Meili Portroute"],["Anastasia Hoshin","Priscilla Barielle"]]},
+ konosuba:{x:[["Vanir","Hans"],["Chris","Eris"]]},
+ tensura:{x:[["Gobta","Rigurd"],["Sôei","Hakurô"],["Diablo","Guy Crimson"],["Gabiru","Geld"],["Ranga","Gobta"]]},
+ overlord:{x:[["Aura","Mare"],["Narberal Gamma","Lupusregina Beta"],["Pandora’s Actor","Demiurge"],["Climb","Renner"],["Gazef Stronoff","Brain Unglaus"]]},
+ mushoku:{x:[["Zenith","Lilia"],["Norn","Aisha"],["Orsted","Hitogami"],["Zanoba","Cliff"]]},
+ shield:{x:[["Ren Amaki","Itsuki Kawasumi"],["Motoyasu Kitamura","Ren Amaki"],["Malty","Mirelia"]]},
+ sao:{x:[["Eugeo","Alice"],["Lisbeth","Silica"],["Akihiko Kayaba","Nobuyuki Sugô"],["Yui","Strea"]]},
+ kaguya:{x:[["Nagisa Kashiwagi","Tsubame Koyasu"]]},
+ horimiya:{h:[["Kakeru Sengoku","Remi Ayasaki"]]},
+ toradora:{h:[["Yûsaku Kitamura","Minori Kushieda"]]},
+ fruba:{h:[["Hatori Sôma","Ayame Sôma"],["Momiji Sôma","Hatsuharu Sôma"]],x:[["Arisa Uotani","Saki Hanajima"],["Kisa Sôma","Hiro Sôma"],["Akito Sôma","Shigure Sôma"]]},
+ frieren:{h:[["Übel","Land"],["Flamme","Serie"]],x:[["Denken","Wirbel"],["Aura","Lügner"],["Sein","Stark"]]},
+ violet:{x:[["Benedict Blue","Erica Brown"],["Iris Cannary","Erica Brown"]]},
+ aprl:{x:[["Emi Igawa","Takeshi Aiza"]]},
+ vinland:{h:[["Einar","Thorfinn"]],x:[["Bjorn","Floki"],["Leif Erikson","Thors"]]},
+ clannad:{x:[["Fûko Ibuki","Kotomi Ichinose"],["Yôhei Sunohara","Mei Sunohara"]]},
+ dn:{x:[["Raye Penber","Naomi Misora"],["Kyôsuke Higuchi","Hideki Ide"],["Sayu Yagami","Misa Amane"]]},
+ cg:{h:[["Cornelia","Euphemia"],["Nunnally","Euphemia"]],x:[["Milly Ashford","Shirley Fenette"],["Jeremiah Gottwald","Villetta Nu"],["Rivalz","Shirley Fenette"]]},
+ tg:{x:[["Yoshimura","Renji Yomo"],["Hideyoshi Nagachika","Hinami Fueguchi"],["Kishô Arima","Seidô Takizawa"],["Yamori","Nico"]]},
+ steins:{x:[["Suzuha Amane","Faris NyanNyan"],["Ruka Urushibara","Mayuri Shiina"]]},
+ sxf:{x:[["Becky Blackbell","Damian Desmond"],["Henry Henderson","Sylvia Sherwood"]]},
+ gintama:{h:[["Kotarô Katsura","Shinsuke Takasugi"],["Isao Kondô","Sôgo Okita"]],x:[["Elizabeth","Sadaharu"],["Tae Shimura","Kyûbei Yagyû"],["Kamui","Shinsuke Takasugi"]]},
+ saiki:{x:[["Reita Toritsuka","Chiyo Yumehara"],["Toritsuka","Aiura Mikoto"]]}
+};
+ANIMES.forEach(a=>{const e=EXTRA[a.id]||{};a.n=a.n.concat(e.n||[]);a.h=a.h.concat(e.h||[]);a.x=(a.x||[]).concat(e.x||[])});
+const MODES={normal:"🙂 Normal",hard:"💀 Difficile",expert:"🧠 Expert"};
+// Paires inter-anime : [perso, anime, perso, anime]
+const CROSS={
+ n:[["Son Goku","db","Naruto Uzumaki","naruto"],["Roronoa Zoro","op","Livaï","aot"],["Satoru Gojô","jjk","Kakashi Hatake","naruto"],
+    ["Itachi Uchiwa","naruto","Sôsuke Aizen","bleach"],["Monkey D. Luffy","op","Asta","bc"],["Shôyô Hinata","haikyu","Yoichi Isagi","bluelock"],
+    ["Kaguya Shinomiya","kaguya","Taiga Aisaka","toradora"],["Kazuma","konosuba","Subaru Natsuki","rezero"]],
+ h:[["Killua Zoldyck","hxh","Zenitsu Agatsuma","ds"],["Kisame","naruto","Jinbei","op"],["Roronoa Zoro","op","Kenpachi Zaraki","bleach"],
+    ["Hisoka","hxh","Dôma","ds"],["Light Yagami","dn","Lelouch","cg"],["L","dn","Shikamaru","naruto"],["Livaï","aot","Giyû Tomioka","ds"],
+    ["Kyôjurô Rengoku","ds","Endeavor","mha"],["Shôto Todoroki","mha","Portgas D. Ace","op"],["Vegeta","db","Katsuki Bakugô","mha"],
+    ["Ken Kaneki","tg","Eren Jäger","aot"],["Rem","rezero","Raphtalia","shield"],["Tetsuya Kuroko","kuroko","Kenma Kozume","haikyu"],
+    ["Tobio Kageyama","haikyu","Rin Itoshi","bluelock"],["Kaede Rukawa","slamdunk","Daiki Aomine","kuroko"],["Frieren","frieren","Violet Evergarden","violet"],
+    ["Gintoki Sakata","gintama","Saitama","opm"],["Tanjirô Kamado","ds","Izuku Midoriya","mha"],["Madara Uchiwa","naruto","Sôsuke Aizen","bleach"],
+    ["Rintarô Okabe","steins","Light Yagami","dn"],["Thorfinn","vinland","Eren Jäger","aot"],["Megumin","konosuba","Shalltear","overlord"],
+    ["Natsu Dragneel","fairy","Portgas D. Ace","op"],["Dio Brando","jojo","Muzan Kibutsuji","ds"],["Arataka Reigen","mob","Gintoki Sakata","gintama"],
+    ["Shigeo Kageyama","mob","Saitama","opm"],["Sung Jin-Woo","solo","Ainz Ooal Gown","overlord"],["Erza Scarlet","fairy","Mikasa Ackerman","aot"],
+    ["Johan Liebert","monster","Light Yagami","dn"],["Norman","tpn","L","dn"],["Jotaro Kujo","jojo","Satoru Gojô","jjk"],["Spike Spiegel","bebop","Gintoki Sakata","gintama"],
+    ["Ken Kaneki","tg","Kafka Hibino","kaiju"],["Tomura Shigaraki","mha","Johan Liebert","monster"]],
+ x:[["Chôsô","jjk","Gyûtarô","ds"],["Puri-Puri Prisoner","opm","Bon Clay","op"],["Mr Satan","db","King","opm"],["Kurogiri","mha","Nakime","ds"],
+    ["Akamaru","naruto","Ranga","tensura"],["Happy","fairy","Puar","db"],["Sadaharu","gintama","Akamaru","naruto"],["Iggy","jojo","Akamaru","naruto"],
+    ["Koby","op","Mumen Rider","opm"],["Tonpa","hxh","Minoru Mineta","mha"],["Yajirobe","db","Chôji Akimichi","naruto"],["Hachi","op","Kisame","naruto"],
+    ["Shizune","naruto","Isane Kotetsu","bleach"],["Zetsu Blanc","naruto","Mr. Compress","mha"],["Tortue Géniale","db","Jiraiya","naruto"],["Mayuri Kurotsuchi","bleach","Caesar Clown","op"],
+    ["Kenny Ackerman","aot","Tôji Fushiguro","jjk"],["Gecko Moria","op","Ainz Ooal Gown","overlord"],["Yushirô","ds","Otto Suwen","rezero"],["Dimple","mob","Kon","bleach"]]
+};
+const AN=Object.fromEntries(ANIMES.map(a=>[a.id,a]));
+const EMOJIS=["🦊","🐉","🐺","🦁","🐼","🐸","🐙","🦄","👾","🤖","👻","🔥","⚡","🌸","🍜","🎴","🗡️","🛡️","🐱","🦅","🍥","💀","🌙","👑"];
+const COLORS=["#FF3D7F","#3DE0FF","#FFD15C","#3CCB97","#9B6BFF","#FF8A3D"];
+const POINTS={civil:2,uc:10,white:6};
+const DEF={mode:"normal",interHard:true,interNormal:false,animes:null,timer:0,whiteNotFirst:true,vibrate:true,theme:"auto",nUc:1,nWhite:0};
+
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const roleName=r=>r==="civil"?"Civil":r==="uc"?"Undercover":"Mr White";
+const plural=(n,w)=>`${n} ${w}${n>1?"s":""}`;
+
+const S={
+  tab:"play",screen:"lobby",
+  set:Object.assign({},DEF,store.get("uca2-settings",{})),
+  profiles:store.get("uca2-profiles",null),
+  selected:store.get("uca2-selected",[]),
+  netSel:store.get("uca2-netsel",null),applied:store.get("uca2-applied",[]),
+  playView:"hub",roomApi:null,roomState:"loading",net:null,flash:"",netErr:"",joinCode:"",busy:false,deal:null,
+  used:[],game:null,dealIdx:0,revealed:false,genreTab:"shonen",lastOut:null,tid:null
+};
+if(!Array.isArray(S.set.animes)) S.set.animes=ANIMES.map(a=>a.id);
+// Reprise des joueurs de l’ancienne version
+if(!Array.isArray(S.profiles)){
+  const old=store.get("uca-players",[]),sc=store.get("uca-scores",{});
+  S.profiles=old.map((n,i)=>({id:uid(),name:n,emoji:EMOJIS[i%EMOJIS.length],color:COLORS[i%COLORS.length],games:0,wins:0,pts:sc[n]||0}));
+  S.selected=S.profiles.map(p=>p.id);
+}
+S.selected=S.selected.filter(id=>S.profiles.some(p=>p.id===id));
+if(!Array.isArray(S.netSel)) S.netSel=S.selected.slice(0,1);
+S.netSel=S.netSel.filter(id=>S.profiles.some(p=>p.id===id));
+const save=()=>{store.set("uca2-settings",S.set);store.set("uca2-profiles",S.profiles);store.set("uca2-selected",S.selected)};
+const prof=id=>S.profiles.find(p=>p.id===id);
+const ava=(p,cls="")=>`<span class="ava ${cls}" style="--c:${/^#[0-9a-fA-F]{6}$/.test(p.color)?p.color:"#888888"}" aria-hidden="true">${esc(p.emoji)}</span>`;
+const buzz=ms=>{if(S.set.vibrate&&navigator.vibrate){try{navigator.vibrate(ms)}catch(e){}}};
+
+function applyTheme(){
+  const r=document.documentElement;
+  if(S.set.theme==="auto") r.removeAttribute("data-theme"); else r.dataset.theme=S.set.theme;
+}
+
+/* ---------- Catalogue ---------- */
+function pairsOf(a,mode){return mode==="hard"?a.h:mode==="expert"?a.x:a.n}
+function interOn(){return S.set.mode==="normal"?S.set.interNormal:S.set.interHard}
+function pool(){
+  const on=new Set(S.set.animes), out=[], m=S.set.mode;
+  ANIMES.forEach(a=>{if(!on.has(a.id))return;
+    pairsOf(a,m).forEach((p,i)=>out.push({key:a.id+m+i,a:{n:p[0],a:a.id},b:{n:p[1],a:a.id}}));
+  });
+  if(interOn()) (m==="normal"?[["n",CROSS.n]]:m==="hard"?[["h",CROSS.h]]:[["h",CROSS.h],["x",CROSS.x]]).forEach(([tag,list])=>list.forEach((c,i)=>{
+    if(AN[c[1]]&&AN[c[3]]&&on.has(c[1])&&on.has(c[3])) out.push({key:"x"+m+tag+i,a:{n:c[0],a:c[1]},b:{n:c[2],a:c[3]},cross:true});
+  }));
+  return out;
+}
+function pickPair(){
+  const all=pool();
+  let avail=all.filter(p=>!S.used.includes(p.key));
+  if(!avail.length){S.used=[];avail=all}
+  const p=avail[Math.floor(Math.random()*avail.length)];
+  S.used.push(p.key);
+  return Math.random()<.5?{civil:p.a,uc:p.b,cross:p.cross}:{civil:p.b,uc:p.a,cross:p.cross};
+}
+
+/* ---------- Joueurs et règles de lancement ---------- */
+const safeColor=c=>/^#[0-9a-fA-F]{6}$/.test(c)?c:"#888888";
+const toPlayer=(p,peer)=>({id:p.id,n:p.name,e:p.emoji,c:p.color,peer});
+function cleanPl(list){
+  if(!Array.isArray(list)) return [];
+  return list.slice(0,8).filter(q=>q&&typeof q.n==="string"&&q.n.trim()).map(q=>({
+    id:String(q.id||"").slice(0,12)||uid(),n:String(q.n).slice(0,16),e:String(q.e||"🙂").slice(0,8),c:safeColor(q.c)}));
+}
+function rosterLocal(){return S.profiles.filter(p=>S.selected.includes(p.id)).map(p=>toPlayer(p,null))}
+// Les téléphones d’une room : l’hôte d’abord, puis les invités dans l’ordre d’arrivée
+function phones(){
+  const N=S.net; if(!N) return [];
+  const list=[];
+  const mine=S.profiles.filter(p=>N.sel.includes(p.id)).map(p=>({id:p.id,n:p.name,e:p.emoji,c:p.color}));
+  if(N.isHost) list.push({peer:N.me,me:true,host:true,pl:mine});
+  N.peers.forEach(pr=>{
+    if(pr.sameTab||!pr.presence) return;
+    const pres=pr.presence;
+    if(N.isHost&&pres.h) return;
+    if(!N.isHost&&pres.h&&pr.peer!==N.hostPeer) return;
+    if(!pres.h&&!pres.g) return;
+    list.push({peer:pr.peer,me:false,host:!!pres.h,pl:cleanPl(pres.pl),ready:pres.ready});
+  });
+  if(!N.isHost) list.splice(list.findIndex(x=>x.host)+1,0,{peer:N.me,me:true,host:false,pl:mine});
+  list.sort((a,b)=>(b.host?1:0)-(a.host?1:0));
+  return list;
+}
+function rosterOnline(){
+  const out=[];
+  phones().forEach(ph=>ph.pl.forEach(q=>out.push({id:q.id,n:q.n,e:q.e,c:q.c,peer:ph.peer})));
+  return out.slice(0,16);
+}
+function problemFor(n){
+  const maxImp=Math.max(0,Math.floor((n-1)/2)), imp=S.set.nUc+S.set.nWhite;
+  if(n<3) return "Il faut au moins 3 joueurs.";
+  if(imp>maxImp) return `Avec ${n} joueurs : ${plural(maxImp,"imposteur")} maximum.`;
+  if(!pool().length) return "Aucune paire dispo : active des animes dans Réglages.";
+  return "";
+}
+
+/* ---------- Rooms hors claude.ai : connexion directe entre téléphones (PeerJS) ---------- */
+// L’hôte est le centre : chaque invité se connecte à lui, il renvoie à tous la liste des présences.
+const P2P={
+  join(name,isHost){return new Promise((res,rej)=>{
+    const hostId="underillusion-"+name;
+    let peer;
+    try{peer=isHost?new Peer(hostId,{debug:0}):new Peer(undefined,{debug:0})}catch(e){rej({code:"network"});return}
+    let selfId=null,mine={},hostConn=null,hostList=[],connected=false,closed=false,settled=false,fireT=null,bT=null;
+    const others=new Map(), ph=[], ch=[];
+    const entry=(peerId,pres,me)=>({peer:peerId,by:null,isMe:me,sameTab:me,kind:"viewer",guest:false,presence:pres||{},updatedAt:Date.now()});
+    const snapshot=()=>{
+      const arr=[entry(selfId||"me",mine,true)];
+      if(isHost) others.forEach((v,k)=>{if(v.pres)arr.push(entry(k,v.pres,false))});
+      else hostList.forEach(e=>{if(e&&typeof e.peer==="string"&&e.peer!==selfId)arr.push(entry(e.peer,e.presence&&typeof e.presence==="object"?e.presence:{},false))});
+      return arr;
+    };
+    const fire=()=>{if(fireT)return;fireT=setTimeout(()=>{fireT=null;const p=snapshot();ph.slice().forEach(h=>{try{h({peers:p,joined:[],left:[],updated:[]})}catch(e){console.error(e)}})},0)};
+    const setConn=c=>{if(connected!==c){connected=c;ch.slice().forEach(h=>{try{h(c)}catch(e){}})}};
+    const broadcast=()=>{if(bT)return;bT=setTimeout(()=>{bT=null;
+      const list=[{peer:selfId,presence:mine}];others.forEach((v,k)=>{if(v.pres)list.push({peer:k,presence:v.pres})});
+      others.forEach(v=>{try{if(v.conn&&v.conn.open)v.conn.send({t:"peers",list})}catch(e){}});
+    },40)};
+    const api={name,
+      presence(patch){
+        mine=Object.assign({},mine,patch);Object.keys(mine).forEach(k=>{if(mine[k]===null)delete mine[k]});
+        if(isHost) broadcast(); else if(hostConn&&hostConn.open){try{hostConn.send({t:"pres",presence:mine})}catch(e){}}
+        fire();return Promise.resolve();
+      },
+      peers:snapshot,
+      onPeers(h){ph.push(h);fire();return()=>{const i=ph.indexOf(h);if(i>=0)ph.splice(i,1)}},
+      connected:()=>connected,
+      onConnection(h){ch.push(h);setTimeout(()=>h(connected),0);return()=>{const i=ch.indexOf(h);if(i>=0)ch.splice(i,1)}},
+      leave(){closed=true;try{peer.destroy()}catch(e){}return Promise.resolve()},
+      emit(){return Promise.resolve()},on(){return()=>{}}
+    };
+    const done=(ok,err)=>{if(settled)return;settled=true;if(ok)res(api);else{closed=true;try{peer.destroy()}catch(e){}rej(err)}};
+    const connectHost=()=>{
+      if(closed||peer.destroyed) return;
+      const c=peer.connect(hostId,{reliable:true,serialization:"json"});
+      c.on("open",()=>{hostConn=c;setConn(true);try{c.send({t:"pres",presence:mine})}catch(e){}done(true)});
+      c.on("data",d=>{if(d&&d.t==="peers"&&Array.isArray(d.list)){hostList=d.list.slice(0,40);fire()}});
+      c.on("close",()=>{if(hostConn===c){hostConn=null;hostList=[];setConn(false);fire();if(!closed)setTimeout(connectHost,2000)}});
+      c.on("error",()=>{});
+    };
+    peer.on("open",id=>{selfId=id;if(isHost){setConn(true);done(true);fire()}else connectHost()});
+    peer.on("connection",c=>{
+      if(!isHost){try{c.close()}catch(e){}return}
+      c.on("open",()=>{const v=others.get(c.peer)||{};v.conn=c;others.set(c.peer,v);broadcast()});
+      c.on("data",d=>{
+        if(!d||d.t!=="pres"||!d.presence||typeof d.presence!=="object") return;
+        if(JSON.stringify(d.presence).length>4096) return;
+        const v=others.get(c.peer)||{};v.conn=c;v.pres=d.presence;others.set(c.peer,v);broadcast();fire();
+      });
+      c.on("close",()=>{const v=others.get(c.peer);if(v&&v.conn===c){others.delete(c.peer);broadcast();fire()}});
+    });
+    peer.on("disconnected",()=>{if(!closed)setTimeout(()=>{try{if(!peer.destroyed&&peer.disconnected)peer.reconnect()}catch(e){}},1500)});
+    peer.on("error",err=>{
+      const t=err&&err.type;
+      if(!settled){done(false,{code:t==="unavailable-id"?"taken":t==="peer-unavailable"?"no_room":"network"});return}
+      if(t==="peer-unavailable"&&!isHost&&!closed) setTimeout(connectHost,3000);
+    });
+    setTimeout(()=>done(false,{code:"timeout"}),15000);
+  })}
+};
+
+/* ---------- Room en ligne ---------- */
+const CODE_CHARS="ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const genCode=()=>Array.from({length:5},()=>CODE_CHARS[Math.floor(Math.random()*CODE_CHARS.length)]).join("");
+const roomName=code=>"uca-"+code.toLowerCase();
+
+function syncPresence(){
+  const N=S.net; if(!N||!N.room) return;
+  const pl=S.profiles.filter(p=>N.sel.includes(p.id)).map(p=>({id:p.id,n:p.name,e:p.emoji,c:p.color}));
+  const ready=S.game&&S.deal&&S.deal.done&&S.deal.gid===S.game.gid?S.game.gid:null;
+  let pres;
+  if(N.isHost){
+    const st=S.game?Object.assign({},S.game,{phase:S.screen==="lobby"?"deal":S.screen}):null;
+    const genres=GENRES.filter(g=>ANIMES.some(a=>a.g===g.id&&S.set.animes.includes(a.id))).map(g=>g.e).join(" ");
+    pres={h:1,code:N.code,pl,ready,st,info:{mode:S.set.mode,inter:interOn(),pool:pool().length,nUc:S.set.nUc,nWhite:S.set.nWhite,genres,timer:S.set.timer}};
+  } else {
+    pres={g:1,code:N.code,pl,ready,guess:N.guess||null};
+  }
+  const js=JSON.stringify(pres);
+  if(js===N.last) return;
+  N.last=js;
+  N.room.presence(pres).catch(()=>{});
+}
+
+async function openRoom(code,isHost){
+  const api=S.roomApi;
+  if(!api) throw new Error("off");
+  const room=S.roomKind==="p2p"?await P2P.join(roomName(code),isHost):await api.join(roomName(code));
+  S.net={room,code,isHost,sel:S.netSel.slice(),me:null,peers:[],last:"",lastSt:"",hostPeer:null,hadHost:false,connected:true,guess:null};
+  const N=S.net;
+  N.unsubs=[
+    room.onPeers(ch=>onRoomPeers(ch),()=>leaveNet("La connexion à la room a été perdue.")),
+    room.onConnection(c=>{N.connected=c;if(S.net===N)renderHud()})
+  ];
+  syncPresence();
+  return N;
+}
+
+function onRoomPeers(ch){
+  const N=S.net; if(!N) return;
+  N.peers=ch.peers;
+  const me=ch.peers.find(p=>p.sameTab);
+  if(me&&!N.me){N.me=me.peer;N.last="";syncPresence()}
+  if(N.isHost){
+    if(S.screen==="deal"){checkReady();if(S.deal&&S.deal.done) renderAll()}
+    else if(S.screen==="guess") checkGuess();
+    else if(S.screen==="lobby"&&S.tab==="play") keep(renderAll);
+    return;
+  }
+  // Invité : on suit l’état publié par l’hôte
+  const host=ch.peers.find(p=>!p.sameTab&&p.presence&&p.presence.h===1&&p.presence.code===N.code);
+  if(!host){
+    if(N.hadHost&&!N.lostTimer) N.lostTimer=setTimeout(()=>{
+      if(S.net===N&&!N.peers.some(p=>p.presence&&p.presence.h===1)) leaveNet("L’hôte a fermé la room.");
+      N.lostTimer=null;
+    },9000);
+    return;
+  }
+  N.hostPeer=host.peer;N.hadHost=true;N.info=host.presence.info||{};
+  if(N.joining){N.joining=false;clearTimeout(N.joinTimer);S.busy=false;S.playView="room";N.lastSt="";}
+  const st=host.presence.st&&typeof host.presence.st==="object"?host.presence.st:null;
+  const key=JSON.stringify(st);
+  if(key!==N.lastSt){
+    N.lastSt=key;
+    if(!st){S.game=null;S.screen="lobby";stopTimer();render();return}
+    if(!S.game||S.game.gid!==st.gid){S.deal={gid:st.gid,idx:0,revealed:false,done:false};N.guess=null}
+    const prevPhase=S.screen;
+    S.game=st;
+    S.screen=["deal","play","reveal","guess","end"].includes(st.phase)?st.phase:"play";
+    if(S.screen==="play"&&prevPhase!=="play") {S.game.timeLeft=S.set.timer||0;S.game.running=false}
+    render();
+    return;
+  }
+  if(S.screen==="deal"&&S.deal&&S.deal.done) renderAll();
+  else if(S.screen==="lobby"&&S.tab==="play") keep(renderAll);
+}
+
+function checkReady(){
+  const g=S.game; if(!g||!S.net) return;
+  const devs=[...new Set(g.list.map(x=>x.peer))];
+  if(devs.every(isReady)){setStarter();S.screen="play";render()}
+}
+function isReady(peer){
+  const g=S.game,N=S.net;
+  if(peer===N.me) return !!(S.deal&&S.deal.done&&S.deal.gid===g.gid);
+  const pr=N.peers.find(p=>p.peer===peer);
+  if(!pr) return false;
+  return pr.presence&&pr.presence.ready===g.gid || !g.list.some(x=>x.peer===peer);
+}
+function checkGuess(){
+  const g=S.game,x=g.list[g.lastOut]; if(!x) return;
+  const pr=S.net.peers.find(p=>p.peer===x.peer);
+  const gs=pr&&pr.presence&&pr.presence.guess;
+  if(gs&&gs.gid===g.gid&&gs.r===g.round&&typeof gs.t==="string") resolveGuess(gs.t);
+}
+
+function leaveNet(msg){
+  const N=S.net; if(!N) return;
+  S.net=null;
+  (N.unsubs||[]).forEach(u=>{try{u()}catch(e){}});
+  clearTimeout(N.lostTimer);clearTimeout(N.joinTimer);
+  N.room.leave().catch(()=>{});
+  stopTimer();S.game=null;S.screen="lobby";S.tab="play";S.playView="hub";S.flash=msg||"";
+  render();
+}
+
+/* ---------- Publicités (appli Android et iOS uniquement) ---------- */
+// Bannière en bas dans les menus, jamais pendant une partie.
+// Interstitiel entre deux parties, une partie sur N, au plus une fois toutes les 3 minutes.
+const Ads={ok:false,on:false,shown:false,games:0,lastInter:0,ready:false,h:0,privacy:false,
+  plugin(){const C=window.Capacitor;return C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.AdMob},
+  async init(){
+    const A=this.plugin(),cfg=window.UI_ADS;
+    if(!A||!cfg) return;
+    const pf=window.Capacitor.getPlatform(), c=cfg[pf]; if(!c) return;
+    this.A=A;this.c=c;this.testing=!!(cfg.testing&&cfg.testing[pf]);this.every=Math.max(1,cfg.interstitialEvery||2);
+    try{
+      await A.initialize({tagForChildDirectedTreatment:false,maxAdContentRating:"Teen"});
+      let info=await A.requestConsentInfo();
+      if(info.status==="REQUIRED"&&info.isConsentFormAvailable) info=await A.showConsentForm();
+      this.privacy=info.privacyOptionsRequirementStatus==="REQUIRED";
+      if(pf==="ios"){try{const t=await A.trackingAuthorizationStatus();if(t&&t.status==="notDetermined")await A.requestTrackingAuthorization()}catch(e){}}
+      if(info.canRequestAds===false) return;
+      A.addListener("bannerAdSizeChanged",s=>{this.h=(s&&s.height)||0;if(this.on)this.pad(this.h)});
+      A.addListener("interstitialAdDismissed",()=>this.prep());
+      A.addListener("interstitialAdFailedToShow",()=>this.prep());
+      this.ok=true;this.prep();this.sync();
+      if(S.screen==="lobby"&&S.tab==="settings") keep(renderAll);
+    }catch(e){console.warn("Pubs indisponibles",e)}
+  },
+  pad(h){document.documentElement.style.setProperty("--ad-h",h+"px")},
+  async prep(){try{await this.A.prepareInterstitial({adId:this.c.interstitial,isTesting:this.testing});this.ready=true}catch(e){this.ready=false}},
+  sync(){
+    if(!this.ok) return;
+    const want=S.screen==="lobby"&&!S.sheetOpen;
+    if(want&&!this.on){
+      this.on=true;
+      if(this.shown){this.A.resumeBanner().catch(()=>{});this.pad(this.h)}
+      else{this.shown=true;this.A.showBanner({adId:this.c.banner,adSize:"ADAPTIVE_BANNER",position:"BOTTOM_CENTER",margin:0,isTesting:this.testing}).catch(()=>{this.shown=false;this.on=false})}
+    } else if(!want&&this.on){
+      this.on=false;this.pad(0);this.A.hideBanner().catch(()=>{});
+    }
+  },
+  betweenGames(){
+    if(!this.ok) return;
+    this.games++;
+    if(this.games%this.every!==0||!this.ready||Date.now()-this.lastInter<180000) return;
+    this.lastInter=Date.now();this.ready=false;
+    this.A.showInterstitial().catch(()=>this.prep());
+  },
+  privacyForm(){if(this.ok)this.A.showPrivacyOptionsForm().catch(()=>{})}
+};
+
+/* ---------- HUD et onglets ---------- */
+function renderHud(){
+  const h=document.getElementById("hud");
+  if(S.screen==="lobby"){
+    h.innerHTML=`<div class="t">Under<span>Illusion</span></div>
+      ${S.net?`<span class="pill hot">${S.net.connected?"🌐":"⏳"} ${esc(S.net.code)}</span>`:`<span class="pill ${S.set.mode!=="normal"?"hot":""}">${MODES[S.set.mode]}</span>`}
+      <span class="pill">🎴 ${S.net&&!S.net.isHost?(S.net.info&&S.net.info.pool||"?"):pool().length}</span>`;
+    return;
+  }
+  const g=S.game, alive=g.list.filter(p=>p.alive);
+  const imp=alive.filter(p=>p.role!=="civil").length;
+  const title=S.screen==="deal"?`Distribution`:S.screen==="end"?"Résultats":`Tour ${g.round}`;
+  h.innerHTML=`<div class="t">${title}</div>
+    ${S.net?`<span class="pill">${S.net.connected?"🌐":"⏳"} ${esc(S.net.code)}</span>`:""}
+    ${S.screen!=="deal"&&S.screen!=="end"?`<span class="pill">👥 ${alive.length}</span><span class="pill hot">🕵️ ${imp}</span>`:""}
+    <button class="icon-btn" id="quit" aria-label="Quitter">✕</button>`;
+  document.getElementById("quit").onclick=()=>{
+    const host=S.net&&S.net.isHost;
+    openSheet(`<h2>${S.net?(host?"Fermer la room ?":"Quitter la room ?"):"Quitter la partie ?"}</h2>
+      <p class="muted" style="margin-top:6px">${S.net?(host?"La partie s’arrête pour tous les téléphones.":"Tes joueurs restent dans la partie mais ce téléphone ne la suivra plus."):"La partie en cours sera perdue, sans points."}</p>
+      <div class="row2"><button class="cta alt" data-close>Continuer</button><button class="cta" id="doquit">Quitter</button></div>`,
+      ()=>document.getElementById("doquit").onclick=()=>{closeSheet();
+        if(S.net) leaveNet(""); else {S.game=null;S.screen="lobby";render()}});
+  };
+}
+function renderTabs(){
+  const t=document.getElementById("tabbar");
+  if(S.screen!=="lobby"){t.hidden=true;return}
+  t.hidden=false;
+  const tabs=[["play","🎮","Jouer"],["profiles","👤","Profils"],["settings","⚙️","Réglages"]];
+  t.innerHTML=`<div class="in">${tabs.map(([id,i,l])=>`<button class="tab" data-tab="${id}" ${S.tab===id?'aria-current="page"':""}><span class="i" aria-hidden="true">${i}</span>${l}</button>`).join("")}</div>`;
+  t.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{S.tab=b.dataset.tab;render()});
+}
+
+/* ---------- Feuille modale ---------- */
+function openSheet(html,bind){
+  const m=document.getElementById("modal");
+  S.sheetOpen=true;Ads.sync();
+  m.innerHTML=`<div class="scrim" id="scrim"><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div></div>`;
+  document.getElementById("scrim").onclick=e=>{if(e.target.id==="scrim")closeSheet()};
+  m.querySelectorAll("[data-close]").forEach(b=>b.onclick=closeSheet);
+  bind&&bind();
+}
+function closeSheet(){document.getElementById("modal").innerHTML="";S.sheetOpen=false;Ads.sync()}
+
+function editProfile(id){
+  const p=id?prof(id):{name:"",emoji:EMOJIS[Math.floor(Math.random()*EMOJIS.length)],color:COLORS[S.profiles.length%COLORS.length]};
+  let d={name:p.name,emoji:p.emoji,color:p.color};
+  const draw=()=>{
+    openSheet(`
+      <div style="display:flex;align-items:center;gap:14px">${ava(d,"lg")}<h2>${id?"Modifier le profil":"Nouveau profil"}</h2></div>
+      <label class="lbl2" for="pn">Pseudo</label>
+      <input class="field" id="pn" maxlength="16" value="${esc(d.name)}" placeholder="Ton pseudo" autocomplete="off" enterkeyhint="done">
+      <p class="warn" id="perr" hidden></p>
+      <span class="lbl2">Avatar</span>
+      <div class="egrid" role="radiogroup" aria-label="Avatar">${EMOJIS.map(e=>`<button role="radio" aria-checked="${e===d.emoji}" data-e="${e}">${e}</button>`).join("")}</div>
+      <span class="lbl2">Couleur</span>
+      <div class="cgrid" role="radiogroup" aria-label="Couleur">${COLORS.map(c=>`<button role="radio" aria-label="Couleur ${c}" aria-checked="${c===d.color}" style="--c:${c}" data-c="${c}"></button>`).join("")}</div>
+      <div class="row2">${id?`<button class="cta alt" id="pdel">Supprimer</button>`:`<button class="cta alt" data-close>Annuler</button>`}<button class="cta" id="psave">Enregistrer</button></div>`,
+    ()=>{
+      const inp=document.getElementById("pn");
+      inp.oninput=()=>d.name=inp.value;
+      document.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>{d.emoji=b.dataset.e;draw()});
+      document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{d.color=b.dataset.c;draw()});
+      const ok=()=>{
+        const n=d.name.trim(),err=document.getElementById("perr");
+        if(!n){err.hidden=false;err.textContent="Choisis un pseudo.";return}
+        if(S.profiles.some(x=>x.id!==id&&x.name.toLowerCase()===n.toLowerCase())){err.hidden=false;err.textContent="Ce pseudo existe déjà.";return}
+        if(id) Object.assign(prof(id),{name:n,emoji:d.emoji,color:d.color});
+        else {const np={id:uid(),name:n,emoji:d.emoji,color:d.color,games:0,wins:0,pts:0};S.profiles.push(np);S.selected.push(np.id);S.netSel.push(np.id);store.set("uca2-netsel",S.netSel);if(S.net)S.net.sel.push(np.id)}
+        save();closeSheet();buzz(20);render();
+      };
+      document.getElementById("psave").onclick=ok;
+      inp.onkeydown=e=>{if(e.key==="Enter")ok()};
+      const del=document.getElementById("pdel");
+      if(del) del.onclick=()=>{S.profiles=S.profiles.filter(x=>x.id!==id);S.selected=S.selected.filter(x=>x!==id);save();closeSheet();render()};
+    });
+  };
+  draw();
+}
+
+/* ---------- Onglet Jouer ---------- */
+function renderPlayTab(){
+  if(S.net&&!S.net.joining) return renderRoom();
+  if(S.playView==="local") return renderLobby();
+  if(S.playView==="create"||S.playView==="join") return renderNetSetup();
+  return renderHub();
+}
+function rosterPicker(sel,attr){
+  return `<div class="roster">
+    ${S.profiles.map(p=>`<button class="ptile" ${attr}="${p.id}" aria-pressed="${sel.includes(p.id)}">${ava(p)}<span class="nm">${esc(p.name)}</span></button>`).join("")}
+    <button class="ptile add" id="newp"><span class="ava" aria-hidden="true">＋</span><span class="nm">Ajouter</span></button>
+  </div>`;
+}
+function rolesBox(editable){
+  return `<div class="roles">
+      <div class="rbox"><div class="lbl">🕵️ Undercover</div><div class="ctrl">
+        ${editable?`<button class="sbtn" data-st="nUc:-1" aria-label="Moins" ${S.set.nUc<=1?"disabled":""}>−</button>`:"<span></span>"}<span class="v">${S.set.nUc}</span>${editable?`<button class="sbtn" data-st="nUc:1" aria-label="Plus">+</button>`:"<span></span>"}</div></div>
+      <div class="rbox"><div class="lbl">❔ Mr White</div><div class="ctrl">
+        ${editable?`<button class="sbtn" data-st="nWhite:-1" aria-label="Moins" ${S.set.nWhite<=0?"disabled":""}>−</button>`:"<span></span>"}<span class="v">${S.set.nWhite}</span>${editable?`<button class="sbtn" data-st="nWhite:1" aria-label="Plus">+</button>`:"<span></span>"}</div></div>
+    </div>`;
+}
+function bindRoles(){
+  app.querySelectorAll("[data-st]").forEach(b=>b.onclick=()=>{
+    const [k,d]=b.dataset.st.split(":");S.set[k]=Math.max(k==="nUc"?1:0,Math.min(5,S.set[k]+ +d));save();keep(renderAll);
+  });
+}
+const backLink=`<button class="backlink" id="back">‹ Retour</button>`;
+
+function renderHub(){
+  const ok=!!S.roomApi;
+  app.innerHTML=`
+    <section class="banner cut">
+      <h1>Under<br>Illusion</h1>
+      <p>Un intrus se cache parmi les persos. À vous de le démasquer.</p>
+    </section>
+    ${S.flash?`<p class="warn" style="margin:-8px 0 16px">${esc(S.flash)}</p>`:""}
+    <button class="mode-card" id="goLocal">
+      <span class="ic" aria-hidden="true">📱</span>
+      <h3>Jouer en local</h3>
+      <span class="muted">Un seul téléphone que vous vous passez.</span>
+    </button>
+    <div class="mode-card online">
+      <span class="ic" aria-hidden="true">🌐</span>
+      <h3>Room en ligne</h3>
+      <span class="muted">Plusieurs téléphones, chacun avec un ou plusieurs joueurs. Un code pour rejoindre.${S.roomKind==="p2p"?" Tout le monde doit utiliser l’appli téléchargée.":""}</span>
+      ${ok?`<div class="acts"><button class="btn-s" id="goCreate">Créer une room</button><button class="btn-s alt" id="goJoin">Rejoindre</button></div>`
+        :`<p class="hint" style="margin:12px 0 0">${S.roomState==="loading"?"Connexion au service de room…":(window.claude?"Les rooms ne sont pas disponibles ici. Ouvre l’appli depuis claude.ai en étant connecté, sur un lien auquel tu as été invité.":"Les rooms en ligne ont besoin d’internet. Le mode local, lui, marche même hors connexion.")}</p>`}
+    </div>`;
+  document.getElementById("goLocal").onclick=()=>{S.flash="";S.playView="local";render()};
+  if(ok){
+    document.getElementById("goCreate").onclick=()=>{S.flash="";S.playView="create";S.netErr="";render()};
+    document.getElementById("goJoin").onclick=()=>{S.flash="";S.playView="join";S.netErr="";render()};
+  }
+}
+
+function renderLobby(){
+  const n=S.selected.length, imp=S.set.nUc+S.set.nWhite, pb=problemFor(n);
+  app.innerHTML=`${backLink}
+    <div class="sec-h" style="margin-top:6px"><h2>Qui joue ?</h2><span class="hint">${n} sélectionné${n>1?"s":""}</span></div>
+    ${rosterPicker(S.selected,"data-sel")}
+    <div class="sec-h"><h2>Rôles</h2><span class="hint">${n>=3?plural(Math.max(0,n-imp),"civil"):""}</span></div>
+    ${rolesBox(true)}
+    <p class="hint" style="margin-top:12px">${MODES[S.set.mode]}, ${plural(pool().length,"paire")}${interOn()?", inter-anime":""}${S.set.timer?`, chrono ${S.set.timer} s`:""}. À changer dans Réglages.</p>
+    ${pb?`<p class="warn">${pb}</p>`:""}
+    <button class="cta" id="start" ${pb?"disabled":""}>Lancer la partie</button>
+    ${rulesHtml()}`;
+  document.getElementById("back").onclick=()=>{S.playView="hub";render()};
+  app.querySelectorAll("[data-sel]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.sel;S.selected=S.selected.includes(id)?S.selected.filter(x=>x!==id):[...S.selected,id];buzz(10);save();keep(renderAll);
+  });
+  document.getElementById("newp").onclick=()=>editProfile(null);
+  bindRoles();
+  document.getElementById("start").onclick=startGame;
+}
+function rulesHtml(){return `<details class="rules">
+      <summary>Comment on joue</summary>
+      <ul>
+        <li>Chacun retourne sa carte en secret.</li>
+        <li>Les civils ont tous le même perso. L’Undercover en a un proche. Mr White n’a rien et doit bluffer.</li>
+        <li>Dans l’ordre affiché, chacun donne un seul indice sur son perso, sans le nommer.</li>
+        <li>Votez, puis éliminez le joueur choisi : son rôle est révélé.</li>
+        <li>Mr White éliminé peut encore gagner en devinant le perso des civils.</li>
+        <li>Les civils gagnent quand tous les imposteurs sont dehors. Les imposteurs gagnent s’il ne reste qu’un civil.</li>
+      </ul>
+    </details>`}
+
+function renderNetSetup(){
+  const create=S.playView==="create", n=S.netSel.length;
+  app.innerHTML=`${backLink}
+    <div class="sec-h" style="margin-top:6px"><h2>${create?"Créer une room":"Rejoindre une room"}</h2></div>
+    ${create?"":`<label class="lbl2" for="code" style="margin-top:0">Code de la room</label>
+      <input class="field code-in" id="code" maxlength="5" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="•••••" value="${esc(S.joinCode||"")}" enterkeyhint="go">`}
+    <div class="sec-h"><h2>Qui joue sur ce téléphone ?</h2><span class="hint">${n} joueur${n>1?"s":""}</span></div>
+    ${rosterPicker(S.netSel,"data-ns")}
+    <p class="hint" style="margin-top:10px">Si vous êtes plusieurs sur ce téléphone, sélectionnez chacun : vous vous le passerez pour voir vos cartes.</p>
+    ${S.netErr?`<p class="warn">${esc(S.netErr)}</p>`:""}
+    <button class="cta" id="go" ${S.busy?"disabled":""}>${S.busy?"Connexion…":create?"Créer la room":"Rejoindre"}</button>`;
+  document.getElementById("back").onclick=()=>{S.playView="hub";render()};
+  app.querySelectorAll("[data-ns]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.ns;S.netSel=S.netSel.includes(id)?S.netSel.filter(x=>x!==id):[...S.netSel,id];store.set("uca2-netsel",S.netSel);buzz(10);keep(renderAll);
+  });
+  document.getElementById("newp").onclick=()=>editProfile(null);
+  const ci=document.getElementById("code");
+  if(ci){
+    ci.oninput=()=>{const v=ci.value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,5);ci.value=v;S.joinCode=v};
+    ci.onkeydown=e=>{if(e.key==="Enter")document.getElementById("go").click()};
+  }
+  document.getElementById("go").onclick=async()=>{
+    if(!S.netSel.length){S.netErr="Sélectionne au moins un joueur pour ce téléphone.";keep(renderAll);return}
+    if(!create&&!/^[A-Z0-9]{5}$/.test(S.joinCode||"")){S.netErr="Le code fait 5 caractères (lettres majuscules et chiffres).";keep(renderAll);return}
+    S.busy=true;S.netErr="";keep(renderAll);
+    try{
+      if(create){
+        let tries=0;
+        for(;;){try{await openRoom(genCode(),true);break}catch(e){if(e&&e.code==="taken"&&++tries<4)continue;throw e}}
+        S.busy=false;S.playView="room";render();
+      } else {
+        const N=await openRoom(S.joinCode,false);
+        N.joining=true;
+        N.joinTimer=setTimeout(()=>{
+          if(S.net===N&&N.joining){
+            S.net=null;(N.unsubs||[]).forEach(u=>{try{u()}catch(e){}});N.room.leave().catch(()=>{});
+            S.busy=false;S.netErr=`Aucune room ouverte avec le code ${S.joinCode}. Vérifie le code avec l’hôte.`;render();
+          }
+        },5000);
+      }
+    }catch(e){
+      S.busy=false;S.net=null;
+      S.netErr=e&&e.code==="no_room"?`Aucune room ouverte avec le code ${S.joinCode}. Vérifie le code avec l’hôte.`
+        :!navigator.onLine?"Pas de connexion internet : les rooms en ligne en ont besoin."
+        :"Impossible de se connecter à la room pour l’instant. Réessaie dans un moment, ou passe en 4G si le Wi-Fi bloque.";
+      render();
+    }
+  };
+}
+
+function renderRoom(){
+  const N=S.net, host=N.isHost, info=host?null:(N.info||{});
+  const list=phones(), total=list.reduce((s,p)=>s+p.pl.length,0), pb=host?problemFor(total):"";
+  const mode=host?S.set.mode:info.mode, pc=host?pool().length:info.pool, inter=host?interOn():info.inter;
+  const genres=host?GENRES.filter(g=>ANIMES.some(a=>a.g===g.id&&S.set.animes.includes(a.id))).map(g=>g.e).join(" "):info.genres;
+  app.innerHTML=`
+    <div class="codebox cut">
+      <span class="lab">Code de la room</span>
+      <div class="code" aria-label="Code ${esc(N.code.split("").join(" "))}">${esc(N.code)}</div>
+      <button class="copy" id="copy">Copier le code</button>
+    </div>
+    <p class="hint" style="margin-top:10px">${host?"Tes amis ouvrent cette appli sur leur téléphone, touchent « Rejoindre » et tapent ce code.":"Tu es dans la room. L’hôte lance la partie quand tout le monde est là."}</p>
+
+    <div class="sec-h"><h2>Téléphones</h2><span class="hint">${plural(total,"joueur")}</span></div>
+    ${list.map((ph,i)=>`<div class="phone ${ph.me?"me":""}">
+      <div class="h"><span>📱 ${ph.me?"Ce téléphone":ph.host?"Hôte":"Téléphone "+(i+1)}</span>${ph.host?`<span class="pill hot" style="font-size:.7rem;padding:1px 8px">Hôte</span>`:""}</div>
+      <div class="avs">${ph.pl.length?ph.pl.map(q=>`<span class="m">${ava({emoji:q.e,color:q.c})}${esc(q.n)}</span>`).join(""):`<span class="muted">Aucun joueur</span>`}</div>
+    </div>`).join("")}
+
+    <div class="sec-h"><h2>Mes joueurs</h2><span class="hint">sur ce téléphone</span></div>
+    ${rosterPicker(N.sel,"data-rs")}
+
+    <div class="sec-h"><h2>Partie</h2>${host?`<button class="linkbtn" id="toSet">Modifier</button>`:""}</div>
+    <div class="group"><div class="set"><span class="tx"><b>${MODES[mode]||"?"}${inter?" et inter-anime":""}</b><small>${plural(pc||0,"paire")}, ${genres||"aucun genre"}</small></span></div></div>
+    <div style="margin-top:10px">${rolesBox(host)}</div>
+    ${host?(pb?`<p class="warn">${pb}</p>`:""):""}
+    ${host?`<button class="cta" id="start" ${pb||!N.me?"disabled":""}>Lancer la partie</button>`
+      :`<div class="waitbox">⏳ En attente que l’hôte lance la partie…</div>`}
+    <button class="ghost" id="leave">${host?"Fermer la room":"Quitter la room"}</button>
+    ${rulesHtml()}`;
+  document.getElementById("copy").onclick=()=>{try{navigator.clipboard.writeText(N.code);document.getElementById("copy").textContent="Code copié"}catch(e){}};
+  app.querySelectorAll("[data-rs]").forEach(b=>b.onclick=()=>{
+    const id=b.dataset.rs;N.sel=N.sel.includes(id)?N.sel.filter(x=>x!==id):[...N.sel,id];S.netSel=N.sel.slice();store.set("uca2-netsel",S.netSel);buzz(10);keep(renderAll);
+  });
+  document.getElementById("newp").onclick=()=>editProfile(null);
+  document.getElementById("leave").onclick=()=>leaveNet("");
+  if(host){
+    bindRoles();
+    document.getElementById("toSet").onclick=()=>{S.tab="settings";render()};
+    document.getElementById("start").onclick=startGame;
+  }
+}
+
+/* ---------- Onglet Profils ---------- */
+function renderProfiles(){
+  const list=S.profiles.slice().sort((a,b)=>b.pts-a.pts);
+  app.innerHTML=`
+    <div class="sec-h" style="margin-top:4px"><h2>Profils et classement</h2></div>
+    ${list.length?`<div class="plist">${list.map((p,i)=>`
+      <button class="prow ${i===0&&p.pts>0?"top":""}" data-edit="${p.id}" style="text-align:left;width:100%">
+        <span class="rank">${i===0&&p.pts>0?"👑":i+1}</span>${ava(p)}
+        <span class="tx"><span class="nm" style="display:block">${esc(p.name)}</span>
+          <span class="st"><span><b>${p.pts}</b> pts</span><span><b>${p.wins}</b> victoire${p.wins>1?"s":""}</span><span><b>${p.games}</b> partie${p.games>1?"s":""}</span>${p.games?`<span><b>${Math.round(p.wins/p.games*100)}%</b></span>`:""}</span></span>
+        <span class="muted" aria-hidden="true">✎</span>
+      </button>`).join("")}</div>`
+    :`<div class="empty"><div style="font-size:2.4rem">👤</div><p style="margin:8px 0 0">Crée un profil par joueur pour garder les scores d’une soirée à l’autre.</p></div>`}
+    <button class="cta" id="newp">Créer un profil</button>
+    ${S.profiles.some(p=>p.games||p.pts)?`<button class="ghost" id="rst">Remettre les stats à zéro</button>`:""}`;
+  app.querySelectorAll("[data-edit]").forEach(b=>b.onclick=()=>editProfile(b.dataset.edit));
+  document.getElementById("newp").onclick=()=>editProfile(null);
+  const r=document.getElementById("rst");
+  if(r) r.onclick=()=>openSheet(`<h2>Remettre à zéro ?</h2><p class="muted" style="margin-top:6px">Points, victoires et parties de tous les profils seront effacés. Les profils restent.</p>
+    <div class="row2"><button class="cta alt" data-close>Annuler</button><button class="cta" id="ok">Remettre à zéro</button></div>`,
+    ()=>document.getElementById("ok").onclick=()=>{S.profiles.forEach(p=>{p.pts=0;p.wins=0;p.games=0});save();closeSheet();render()});
+}
+
+/* ---------- Onglet Réglages ---------- */
+function sw(key,title,sub){return `<button class="set" role="switch" aria-checked="${!!S.set[key]}" data-sw="${key}"><span class="tx"><b>${title}</b><small>${sub}</small></span><span class="sw" aria-hidden="true"></span></button>`}
+function seg(key,opts){return `<div class="seg" role="radiogroup">${opts.map(([v,l])=>`<button role="radio" aria-checked="${S.set[key]===v}" data-seg="${key}:${v}">${l}</button>`).join("")}</div>`}
+function renderSettings(){
+  const m=S.set.mode, g=S.genreTab;
+  const inG=ANIMES.filter(a=>a.g===g), onG=inG.filter(a=>S.set.animes.includes(a.id)).length;
+  const crossN=interOn()?pool().filter(p=>p.cross).length:0;
+  app.innerHTML=`
+    ${S.net?`<div class="waitbox" style="margin:4px 0 0">${S.net.isHost?"🌐 Tu es l’hôte : les animes et la difficulté s’appliquent à la room "+esc(S.net.code)+".":"🌐 Dans une room, c’est l’hôte qui choisit les animes et la difficulté. Le chrono, les vibrations et le thème restent à toi."}</div>`:""}
+    <div class="sec-h" style="margin-top:14px"><h2>Partie</h2></div>
+    <div class="group">
+      <div class="set col"><span class="tx"><b>Difficulté</b><small>${m==="hard"?"Persos secondaires et duos très proches.":m==="expert"?"Persos tertiaires et figurants : pour les vrais fans.":"Les persos principaux, faciles à décrire."}</small></span>
+        ${seg("mode",[["normal",MODES.normal],["hard",MODES.hard],["expert",MODES.expert]])}</div>
+      ${sw("interHard","Inter-anime en difficile et expert","Mélange des persos de deux animes différents qui se ressemblent (Killua et Zenitsu, Kisame et Jinbei…).")}
+      ${sw("interNormal","Inter-anime en normal","Des duos cross-over plus évidents (Goku et Naruto, Zoro et Livaï…).")}
+      <div class="set col"><span class="tx"><b>Chrono de discussion</b><small>Un compte à rebours par tour, avant le vote.</small></span>
+        ${seg("timer",[[0,"Off"],[60,"60 s"],[90,"90 s"],[120,"2 min"]])}</div>
+      ${sw("whiteNotFirst","Mr White ne commence jamais","Sinon il serait obligé de parler sans aucun indice.")}
+      ${sw("vibrate","Vibrations","Retour haptique sur les actions et à la fin du chrono.")}
+    </div>
+
+    <div class="sec-h"><h2>Catalogue</h2><span class="hint">${plural(pool().length,"paire")}${crossN?`, dont ${crossN} inter-anime`:""}</span></div>
+    <div class="gtabs" role="tablist">
+      ${GENRES.map(x=>{const t=ANIMES.filter(a=>a.g===x.id),o=t.filter(a=>S.set.animes.includes(a.id)).length;
+        return `<button class="gtab" role="tab" aria-selected="${g===x.id}" data-g="${x.id}">${x.e} ${x.name} <span class="c">${o}/${t.length}</span></button>`}).join("")}
+    </div>
+    <div class="ghead"><b>${GENRES.find(x=>x.id===g).e} ${GENRES.find(x=>x.id===g).name}</b>
+      <button class="set" role="switch" aria-checked="${onG===inG.length}" id="gall" style="width:auto;padding:0;border:0;gap:10px"><small class="muted" style="font-weight:700">Tout le genre</small><span class="sw" aria-hidden="true"></span></button></div>
+    <div class="agrid">
+      ${inG.map(a=>{const c=pairsOf(a,m).length,on=S.set.animes.includes(a.id);
+        return `<label class="tog ${on?"on":""}"><input type="checkbox" data-an="${a.id}" ${on?"checked":""}><span class="em" aria-hidden="true">${a.e}</span><span>${esc(a.name)}<small>${c?plural(c,"paire"):"Que de l’inter-anime"}</small></span></label>`}).join("")}
+    </div>
+
+    <div class="sec-h"><h2>Affichage</h2></div>
+    <div class="group"><div class="set col"><span class="tx"><b>Thème</b></span>${seg("theme",[["auto","Auto"],["dark","Sombre"],["light","Clair"]])}</div></div>
+    ${Ads.ok&&Ads.privacy?`<button class="ghost" id="adpriv">Choix de confidentialité des pubs</button>`:""}
+    <a class="ghost" style="text-align:center;text-decoration:none" href="politique-confidentialite.html">Politique de confidentialité</a>`;
+  const ap=document.getElementById("adpriv"); if(ap) ap.onclick=()=>Ads.privacyForm();
+  app.querySelectorAll("[data-sw]").forEach(b=>b.onclick=()=>{const k=b.dataset.sw;S.set[k]=!S.set[k];S.used=[];buzz(10);save();keep(renderAll)});
+  app.querySelectorAll("[data-seg]").forEach(b=>b.onclick=()=>{
+    const [k,v]=b.dataset.seg.split(":");S.set[k]=k==="timer"?+v:v;S.used=[];buzz(10);save();applyTheme();keep(renderAll);
+  });
+  app.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{S.genreTab=b.dataset.g;keep(renderAll)});
+  app.querySelectorAll("[data-an]").forEach(c=>c.onchange=()=>{
+    const id=c.dataset.an;S.set.animes=c.checked?[...S.set.animes,id]:S.set.animes.filter(x=>x!==id);S.used=[];save();keep(renderAll);
+  });
+  document.getElementById("gall").onclick=()=>{
+    const ids=inG.map(a=>a.id);
+    S.set.animes=onG===inG.length?S.set.animes.filter(x=>!ids.includes(x)):[...new Set([...S.set.animes,...ids])];
+    S.used=[];buzz(10);save();keep(renderAll);
+  };
+}
+
+/* ---------- Partie ---------- */
+const isHostOrLocal=()=>!S.net||S.net.isHost;
+const mineIdx=()=>S.game.list.map((_,i)=>i).filter(i=>!S.net||S.game.list[i].peer===S.net.me);
+const P=x=>({name:x.n,emoji:x.e,color:x.c});
+const cardAnime=c=>AN[c.a]||{e:"🎴",name:"Anime"};
+
+function startGame(){
+  const roster=S.net?rosterOnline():rosterLocal();
+  if(problemFor(roster.length)){render();return}
+  const pair=pickPair();
+  const roles=shuffle([...Array(S.set.nUc).fill("uc"),...Array(S.set.nWhite).fill("white"),...Array(roster.length-S.set.nUc-S.set.nWhite).fill("civil")]);
+  S.game={gid:uid(),pair,round:1,out:[],mode:S.set.mode,lastOut:null,
+    list:roster.map((r,i)=>Object.assign({},r,{role:roles[i],card:roles[i]==="civil"?pair.civil:roles[i]==="uc"?pair.uc:null,alive:true}))};
+  S.deal={gid:S.game.gid,idx:0,revealed:false,done:false};
+  S.screen="deal";buzz(30);render();
+}
+
+function finishDeal(){
+  S.deal.done=true;
+  if(!S.net){setStarter();S.screen="play";render();return}
+  syncPresence();
+  if(S.net.isHost) checkReady();
+  renderAll();
+}
+
+function renderDeal(){
+  const g=S.game;
+  if(!S.deal||S.deal.gid!==g.gid) S.deal={gid:g.gid,idx:0,revealed:false,done:false};
+  const mine=mineIdx(), d=S.deal;
+  if(!mine.length&&!d.done){d.done=true;syncPresence();if(S.net&&S.net.isHost)checkReady()}
+  if(d.done) return renderWait();
+  const x=g.list[mine[d.idx]], p=P(x), white=x.role==="white", total=mine.length, last=d.idx>=total-1;
+  const an=white?null:cardAnime(x.card);
+  const doneTxt=last?(S.net?"C’est retenu":"C’est retenu, on joue"):"C’est retenu, cacher";
+  app.innerHTML=`
+    <div class="dots" aria-label="Joueur ${d.idx+1} sur ${total}">${mine.map((_,i)=>`<i class="${i<d.idx?"d":i===d.idx?"c":""}"></i>`).join("")}</div>
+    <div class="stage"><div class="flip ${d.revealed?"on":""}" id="flip">
+      <div class="face back cut">
+        ${ava(p,"lg")}
+        <p class="muted" style="margin:14px 0 0;font-weight:700">${total>1?"Passe le téléphone à":"C’est ton tour"}</p>
+        <div class="bigname">${esc(p.name)}</div>
+      </div>
+      <div class="face front cut ${white?"white":""}" aria-hidden="${!d.revealed}">
+        ${white
+          ?`<div class="emblem">❔</div><div class="word">Mr White</div><p class="muted" style="margin:12px 0 0;max-width:30ch">Tu n’as pas de perso. Écoute les indices et fais semblant.</p>`
+          :`<div class="emblem">${an.e}</div><div class="word">${esc(x.card.n)}</div><span class="from">${esc(an.name)}</span>`}
+      </div>
+    </div></div>
+    <button class="cta" id="act">${!d.revealed?`Je suis ${esc(p.name)}, retourner`:doneTxt}</button>`;
+  document.getElementById("act").onclick=()=>{
+    if(!d.revealed){d.revealed=true;buzz(25);document.getElementById("flip").classList.add("on");
+      document.getElementById("act").textContent=doneTxt;return}
+    d.revealed=false;
+    if(!last){d.idx++;render()} else finishDeal();
+  };
+}
+
+function renderWait(){
+  const g=S.game, N=S.net, host=N&&N.isHost;
+  const devs=[...new Set(g.list.map(x=>x.peer))];
+  const inGame=g.list.some(x=>x.peer===N.me);
+  app.innerHTML=`
+    <div class="result cut"><div class="emblem">${inGame?"✅":"👀"}</div>
+      <div class="bigname">${inGame?"Cartes vues":"Partie en cours"}</div>
+      <p class="muted" style="margin:10px 0 0">${inGame?"On attend les autres téléphones.":"Tu joueras à la prochaine partie."}</p></div>
+    <div class="recap">${devs.map(pe=>{const pl=g.list.filter(x=>x.peer===pe);const ok=isReadyView(pe);
+      return `<div class="r"><span style="font-size:1.3rem">${ok?"✅":"⏳"}</span><span class="nm">${pl.map(x=>esc(x.n)).join(", ")}</span>${pe===N.me?`<span class="hint">ce téléphone</span>`:""}</div>`}).join("")}</div>
+    ${host?`<button class="ghost" id="force">Lancer sans attendre</button>`:""}`;
+  const f=document.getElementById("force");
+  if(f) f.onclick=()=>{setStarter();S.screen="play";render()};
+}
+function isReadyView(peer){
+  const g=S.game,N=S.net;
+  if(peer===N.me) return !!(S.deal&&S.deal.done);
+  const pr=N.peers.find(p=>p.peer===peer);
+  return !!(pr&&pr.presence&&pr.presence.ready===g.gid);
+}
+
+function setStarter(){
+  const g=S.game, alive=g.list.map((p,i)=>({p,i})).filter(o=>o.p.alive);
+  const c=S.set.whiteNotFirst?alive.filter(o=>o.p.role!=="white"):alive;
+  const from=c.length?c:alive;
+  g.start=from[Math.floor(Math.random()*from.length)].i;
+  g.timeLeft=S.set.timer;g.running=false;
+}
+
+function fmt(s){return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`}
+function stopTimer(){if(S.tid){clearInterval(S.tid);S.tid=null}}
+function tlen(){return S.net&&!S.net.isHost?((S.net.info&&S.net.info.timer)||0):S.set.timer}
+function paintTimer(){
+  const g=S.game, el=document.getElementById("timer"), T=tlen();
+  if(!el||!T) return;
+  el.classList.toggle("low",g.timeLeft<=10);
+  el.querySelector(".clock").textContent=fmt(g.timeLeft);
+  el.querySelector(".bar i").style.width=(g.timeLeft/T*100)+"%";
+  el.querySelector("button").textContent=g.timeLeft===0?"Relancer":g.running?"Pause":"Démarrer";
+}
+
+function renderPlay(){
+  const g=S.game, n=g.list.length, order=[], T=tlen(), can=isHostOrLocal();
+  if(typeof g.timeLeft!=="number"||g.timeLeft>T) g.timeLeft=T;
+  for(let k=0;k<n;k++){const i=(g.start+k)%n;if(g.list[i].alive)order.push(i)}
+  app.innerHTML=`
+    ${T?`<div class="timer" id="timer"><span class="clock">${fmt(g.timeLeft)}</span><span class="bar"><i style="width:${g.timeLeft/T*100}%"></i></span><button class="sbtn" style="width:auto;padding:0 14px;font-size:.9rem">Démarrer</button></div>`:""}
+    <p class="muted" style="font-weight:700">${can?"Un indice chacun dans cet ordre, puis votez. Touchez le joueur éliminé.":"Un indice chacun dans cet ordre, puis votez à voix haute. L’hôte élimine le joueur choisi."}</p>
+    <ol class="order">
+      ${order.map((i,k)=>{const x=g.list[i],p=P(x),me=S.net&&x.peer===S.net.me;return `<li class="${k===0?"first":""}"><button data-vote="${i}" ${can?"":"disabled"}>
+        <span class="n">${k+1}</span>${ava(p)}<span>${esc(p.name)}${me?` <small class="muted">(toi)</small>`:""}</span>${k===0?`<span class="tag">Commence</span>`:""}${can?`<span class="vote">Éliminer</span>`:""}</button></li>`}).join("")}
+    </ol>
+    ${g.out.length?`<div class="sec-h"><h2>Éliminés</h2></div><div class="out">${g.out.map(i=>{const x=g.list[i];return `<span>${ava(P(x))}${esc(x.n)} : ${roleName(x.role)}</span>`}).join("")}</div>`:""}`;
+  if(T){
+    paintTimer();
+    document.querySelector("#timer button").onclick=()=>{
+      if(g.timeLeft===0) g.timeLeft=T;
+      g.running=!g.running;
+      if(g.running&&!S.tid){
+        S.tid=setInterval(()=>{
+          g.timeLeft=Math.max(0,g.timeLeft-1);
+          if(g.timeLeft===0){stopTimer();g.running=false;buzz([200,100,200])}
+          paintTimer();
+        },1000);
+      } else if(!g.running) stopTimer();
+      paintTimer();
+    };
+  }
+  if(can) app.querySelectorAll("[data-vote]").forEach(b=>b.onclick=()=>{
+    const i=+b.dataset.vote, p=P(g.list[i]);
+    openSheet(`<div style="text-align:center">${ava(p,"lg")}<h2 style="margin-top:12px">Éliminer ${esc(p.name)} ?</h2><p class="muted" style="margin-top:6px">Son rôle sera révélé à tout le monde.</p></div>
+      <div class="row2"><button class="cta alt" data-close>Annuler</button><button class="cta" id="yes">Éliminer</button></div>`,
+      ()=>document.getElementById("yes").onclick=()=>{closeSheet();eliminate(i)});
+  });
+}
+
+function eliminate(i){
+  const g=S.game;stopTimer();
+  g.list[i].alive=false;g.out.push(i);g.lastOut=i;g.whiteFailed=false;g.guessText="";buzz(60);
+  S.screen=g.list[i].role==="white"?"guess":"reveal";render();
+}
+function checkWin(){
+  const a=S.game.list.filter(p=>p.alive), imp=a.filter(p=>p.role!=="civil").length, civ=a.length-imp;
+  return imp===0?"civil":civ<=1?"imp":null;
+}
+function nextOrEnd(win){
+  if(win) endGame(win); else {S.game.round++;setStarter();S.screen="play";render()}
+}
+function roleCls(r){return r==="civil"?"civil":r==="uc"?"uc":"white"}
+const waitHost=`<div class="waitbox">⏳ En attente de l’hôte…</div>`;
+
+function renderReveal(){
+  const g=S.game, x=g.list[g.lastOut], p=P(x), win=checkWin();
+  app.innerHTML=`
+    <div class="result cut">${ava(p,"lg")}
+      <div class="bigname">${esc(p.name)}</div>
+      <p style="margin:12px 0 0">était <span class="rolechip ${roleCls(x.role)}">${roleName(x.role)}</span></p>
+    </div>
+    <p class="muted" style="text-align:center;font-weight:700">${
+      x.role==="white"&&g.whiteFailed?`Il a proposé « ${esc(g.guessText||"rien")} » : raté. `:""}${
+      win==="civil"?"Plus aucun imposteur en jeu."
+      :win==="imp"?"Il ne reste qu’un seul civil."
+      :x.role==="civil"?"Raté, c’était un innocent. Les imposteurs sont toujours là."
+      :"Bien vu. Mais il en reste peut-être d’autres."}</p>
+    ${isHostOrLocal()?`<button class="cta" id="next">${win?"Voir les résultats":"Tour suivant"}</button>`:waitHost}`;
+  const b=document.getElementById("next");
+  if(b) b.onclick=()=>nextOrEnd(win);
+}
+
+const norm=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\(.*?\)/g," ").replace(/[^a-z0-9 ]/g," ").replace(/\s+/g," ").trim();
+function guessOk(guess,target){
+  const g=norm(guess),t=norm(target);
+  if(!g) return false;
+  if(g===t) return true;
+  const tk=t.split(" ").filter(w=>w.length>=3);
+  return tk.includes(g)||g.split(" ").some(w=>w.length>=4&&tk.includes(w));
+}
+function resolveGuess(t){
+  const g=S.game;
+  if(guessOk(t,g.pair.civil.n)){buzz([60,40,60]);endGame("white",g.lastOut);return}
+  g.whiteFailed=true;g.guessText=String(t).slice(0,40);S.screen="reveal";render();
+}
+function renderGuess(){
+  const g=S.game, x=g.list[g.lastOut], p=P(x);
+  const mine=!S.net||x.peer===S.net.me;
+  const sent=S.net&&S.net.guess&&S.net.guess.gid===g.gid&&S.net.guess.r===g.round;
+  app.innerHTML=`
+    <div class="result cut">${ava(p,"lg")}<div class="bigname">${esc(p.name)}</div>
+      <p style="margin:12px 0 0">était <span class="rolechip white">Mr White</span></p></div>
+    ${mine&&!sent?`<p style="font-weight:700">Dernière chance, ${esc(p.name)} : quel est le perso des civils ?</p>
+      <input class="field" id="g" placeholder="Nom du perso" autocomplete="off" enterkeyhint="done">
+      <button class="cta" id="try">Valider</button>`
+    :`<div class="waitbox">${sent?"Réponse envoyée, l’hôte vérifie…":`🤔 ${esc(p.name)} cherche le perso des civils…`}</div>`}`;
+  if(!mine||sent) return;
+  const go=()=>{
+    const t=document.getElementById("g").value.slice(0,40);
+    if(!t.trim()) return;
+    if(!S.net||S.net.isHost){resolveGuess(t);return}
+    S.net.guess={gid:g.gid,r:g.round,t};syncPresence();renderAll();
+  };
+  document.getElementById("try").onclick=go;
+  document.getElementById("g").onkeydown=e=>{if(e.key==="Enter")go()};
+  document.getElementById("g").focus();
+}
+
+function endGame(winner,whiteIdx){
+  const g=S.game;g.winner=winner;g.gain=[];
+  g.list.forEach((x,i)=>{
+    let won=false,pts=0;
+    if(winner==="civil"&&x.role==="civil"){won=true;pts=POINTS.civil}
+    if(winner==="imp"&&x.role!=="civil"){won=true;pts=x.alive?POINTS[x.role]:0}
+    if(winner==="white"&&i===whiteIdx){won=true;pts=POINTS.white}
+    g.gain[i]=[won?1:0,pts];
+  });
+  S.screen="end";render();
+}
+function applyStats(){
+  const g=S.game; if(!g||!Array.isArray(g.gain)||S.applied.includes(g.gid)) return;
+  S.applied=[g.gid,...S.applied].slice(0,30);store.set("uca2-applied",S.applied);
+  g.list.forEach((x,i)=>{
+    if(S.net&&x.peer!==S.net.me) return;
+    const p=prof(x.id),r=g.gain[i]; if(!p||!r) return;
+    p.games++; if(r[0])p.wins++; p.pts+=r[1];
+  });
+  save();
+}
+function renderEnd(){
+  const g=S.game; applyStats();
+  const t=g.winner==="civil"?["🛡️","Victoire des civils"]:g.winner==="white"?["❔","Mr White a deviné !"]:["🕵️","Victoire des imposteurs"];
+  const ca=cardAnime(g.pair.civil), ua=cardAnime(g.pair.uc);
+  app.innerHTML=`
+    <section class="banner cut"><div style="font-size:3rem;line-height:1">${t[0]}</div><h1 style="font-size:clamp(1.9rem,8.5vw,2.6rem);margin-top:8px">${t[1]}</h1>
+      <div class="stats"><span class="pill">${MODES[g.mode]||""}</span>${g.pair.cross?`<span class="pill">🔀 Inter-anime</span>`:""}</div></section>
+    <div class="words">
+      <div><span class="e">${ca.e}</span><small class="muted" style="display:block;font-weight:700">Civils</small><b>${esc(g.pair.civil.n)}</b></div>
+      <div><span class="e">${ua.e}</span><small class="muted" style="display:block;font-weight:700">Undercover</small><b>${esc(g.pair.uc.n)}</b></div>
+    </div>
+    <div class="recap">${g.list.map((x,i)=>{const r=(g.gain||[])[i]||[0,0];return `<div class="r">${ava(P(x))}<span class="nm">${esc(x.n)}</span>
+      <span class="rolechip ${roleCls(x.role)}" style="font-size:.8rem">${roleName(x.role)}</span>${r[1]?`<span class="plus">+${r[1]}</span>`:""}</div>`}).join("")}</div>
+    ${isHostOrLocal()?`<button class="cta" id="again">Rejouer</button>
+      <button class="cta alt" id="lobby">${S.net?"Retour à la room":"Retour au menu"}</button>`:waitHost}`;
+  if(!isHostOrLocal()) return;
+  document.getElementById("again").onclick=startGame;
+  document.getElementById("lobby").onclick=()=>{S.game=null;S.screen="lobby";S.tab="play";render()};
+}
+
+/* ---------- Rendu ---------- */
+const app=document.getElementById("app");
+let prevScreen="lobby";
+function renderAll(){
+  if(S.screen!=="play") stopTimer();
+  if(prevScreen==="end"&&S.screen!=="end") Ads.betweenGames();
+  prevScreen=S.screen;
+  app.classList.toggle("ingame",S.screen!=="lobby");
+  renderHud();renderTabs();
+  if(S.screen==="lobby") ({play:renderPlayTab,profiles:renderProfiles,settings:renderSettings})[S.tab]();
+  else ({deal:renderDeal,play:renderPlay,reveal:renderReveal,guess:renderGuess,end:renderEnd})[S.screen]();
+  syncPresence();
+  Ads.sync();
+}
+function keep(fn){const y=window.scrollY;fn();window.scrollTo(0,y)}
+function render(){renderAll();window.scrollTo(0,0)}
+applyTheme();render();
+Ads.init();
+if("serviceWorker" in navigator&&location.protocol.startsWith("http")&&!window.claude&&!window.Capacitor){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+// Les rooms s’allument quand le service répond
+(async()=>{
+  try{
+    if(window.claude&&typeof window.claude.use==="function"){
+      const r=await window.claude.use("room");
+      S.roomApi=r||null;S.roomKind="claude";
+    } else if(typeof Peer==="function"){
+      S.roomApi=P2P;S.roomKind="p2p";
+    }
+  }catch(e){S.roomApi=null}
+  S.roomState=S.roomApi?"ok":"off";
+  if(S.screen==="lobby"&&S.tab==="play"&&!S.net) keep(renderAll);
+})();
+</script>
+
+</body>
+</html>

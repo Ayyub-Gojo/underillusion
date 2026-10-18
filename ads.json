@@ -1,0 +1,15 @@
+{
+  "_aide": "useTestAds = true : pubs de démo (pendant le test fermé). Mets false pour la version de production, avec tes vraies pubs.",
+  "useTestAds": true,
+  "interstitialEvery": 2,
+  "android": {
+    "appId": "ca-app-pub-4440008620291915~4540573246",
+    "banner": "ca-app-pub-4440008620291915/3129173245",
+    "interstitial": "ca-app-pub-4440008620291915/7901408761"
+  },
+  "ios": {
+    "appId": "ca-app-pub-3940256099942544~1458002511",
+    "banner": "ca-app-pub-3940256099942544/2435281174",
+    "interstitial": "ca-app-pub-3940256099942544/4411468910"
+  }
+}

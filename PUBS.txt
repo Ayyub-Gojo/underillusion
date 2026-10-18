@@ -1,0 +1,67 @@
+PUBLICITÉS DANS UNDERILLUSION (Google AdMob)
+=============================================
+
+CE QUI EST EN PLACE
+• Une bannière en bas de l’écran dans les menus (Jouer, Profils,
+  Réglages). Elle disparaît pendant les parties et quand une fenêtre
+  s’ouvre, pour ne jamais gêner le jeu.
+• Une pub plein écran entre deux parties : une partie sur 2, et au
+  maximum une toutes les 3 minutes. Réglable dans ads.json
+  (« interstitialEvery » : 3 = une partie sur 3, etc.).
+• Le formulaire de consentement obligatoire en Europe (RGPD) au premier
+  lancement, et un bouton « Choix de confidentialité des pubs » dans
+  Réglages pour le modifier.
+• Sur iPhone, la demande d’autorisation de suivi d’Apple.
+• Seulement dans l’APK et l’IPA : la version web n’a pas de pubs.
+
+Pour l’instant, l’appli utilise les identifiants de TEST de Google :
+tu verras des pubs « Test Ad », sans aucun revenu. C’est normal.
+
+1) CRÉER TON COMPTE ADMOB
+• https://admob.google.com → connecte-toi avec ton compte Google
+  → renseigne pays, fuseau horaire, devise.
+• Paiements → ajoute tes infos fiscales et bancaires (sinon Google
+  ne pourra pas te verser tes gains).
+
+2) AJOUTER L’APPLI
+• Applications → « Ajouter une application » → Android.
+  « Est-elle publiée sur un store ? » → Non pour l’instant (tu la
+  relieras au Play Store une fois publiée). Nom : UnderIllusion.
+• Recommence pour iOS si tu comptes la publier sur l’App Store.
+
+3) CRÉER LES BLOCS D’ANNONCES (pour chaque appli)
+• « Blocs d’annonces » → « Ajouter » → Bannière → nom « Bannière menus ».
+• Encore « Ajouter » → Interstitiel → nom « Entre deux parties ».
+
+4) METTRE TES IDENTIFIANTS DANS LE PROJET
+   (Android : déjà fait, tes identifiants sont dans ads.json.)
+Ouvre ads.json sur GitHub (icône crayon) et remplace les valeurs :
+• appId        → l’ID d’application (ca-app-pub-xxxx~yyyy, avec un ~)
+• banner       → l’ID du bloc Bannière (ca-app-pub-xxxx/yyyy, avec un /)
+• interstitial → l’ID du bloc Interstitiel
+Commit : les applis se recompilent avec tes vraies pubs.
+
+5) LE CONSENTEMENT RGPD (obligatoire en France)
+Dans AdMob : Confidentialité et messages → RGPD → « Créer un message »
+→ choisis ton appli, langue Français, et publie-le. C’est ce message
+qui s’affichera au premier lancement. Sans lui, Google ne sert presque
+aucune pub en Europe.
+
+6) LE FICHIER app-ads.txt (déjà rempli avec ton identifiant pub-4440008620291915)
+• Dans AdMob : Applications → Afficher toutes → app-ads.txt → copie
+  la ligne proposée (google.com, pub-..., DIRECT, f08c47fec0942fa0).
+• Colle-la dans le fichier app-ads.txt du dossier de l’appli web
+  (underillusion-app), à la place de la ligne d’exemple, et remets
+  le site en ligne sur Netlify.
+• Dans Play Console, indique l’adresse de ce site comme « Site web »
+  du développeur. Sans ça, une partie des annonceurs ne paie pas.
+
+⚠️ RÈGLES À RESPECTER (sinon Google peut fermer ton compte AdMob)
+• Ne clique JAMAIS sur tes propres pubs, et ne demande pas à tes potes
+  de le faire.
+• Pendant le test fermé avec tes 12 testeurs, laisse "useTestAds": true
+  dans ads.json. Pour la version de production, mets "useTestAds": false
+  et recompile : tes vraies pubs s’affichent.
+• Ne change pas l’emplacement des pubs pour qu’elles apparaissent
+  pendant une partie ou sous un bouton : ce genre de placement est
+  sanctionné.

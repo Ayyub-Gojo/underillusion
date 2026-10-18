@@ -1,0 +1,57 @@
+FICHE PLAY STORE – textes à copier-coller
+=========================================
+
+NOM DE L’APPLI (30 caractères max)
+UnderIllusion
+
+DESCRIPTION COURTE (80 caractères max)
+Trouve l’intrus parmi les persos d’anime : le jeu d’ambiance entre potes !
+
+DESCRIPTION COMPLÈTE
+Un intrus se cache parmi vous… sauras-tu le démasquer ?
+
+UnderIllusion est un jeu d’ambiance pour les fans d’anime, à jouer entre amis, en soirée ou en famille. Chaque joueur reçoit secrètement un personnage. Les civils ont tous le même… sauf l’intrus, qui a un personnage très proche. Et le joker, lui, n’a rien du tout et doit bluffer !
+
+🎴 COMMENT ÇA MARCHE
+• Chacun découvre sa carte en secret
+• À tour de rôle, donnez un seul indice sur votre personnage
+• Votez pour éliminer le joueur le plus suspect
+• Les civils gagnent s’ils éliminent tous les imposteurs, les imposteurs gagnent s’ils survivent
+
+🔥 PLUS DE 600 DUOS DE PERSONNAGES
+• 3 niveaux : Normal, Difficile et Expert, pour les vrais fans
+• Des duos entre animes différents qui se ressemblent
+• Plus de 50 animes classés par genre : shônen, sport, isekai, romance, drama, dark, comédie
+• Active ou désactive les animes que vous connaissez
+
+📱 EN LOCAL OU EN LIGNE
+• Un seul téléphone qu’on se passe, sans connexion
+• Ou des rooms en ligne : créez une room, partagez le code, chaque téléphone peut accueillir plusieurs joueurs
+
+🏆 PROFILS ET CLASSEMENT
+• Un profil par joueur avec avatar et couleur
+• Points, victoires et classement d’une soirée à l’autre
+
+⚙️ ET AUSSI
+• Chrono de discussion
+• Thème sombre ou clair
+• Sans compte, gratuit
+
+UnderIllusion est un jeu de fan non officiel. Les noms de personnages appartiennent à leurs auteurs et éditeurs respectifs.
+
+CATÉGORIE CONSEILLÉE
+Jeux > Société (ou Jeux > Questions-réponses)
+
+TAGS
+Jeu d’ambiance, Multijoueur local, Party game
+
+VISUELS (dossier store/)
+• icone-512.png ............ Icône de l’appli (512 x 512)
+• banniere-1024x500.png .... Image de présentation (obligatoire)
+• capture-1 à 6.png ........ Captures téléphone (1080 x 1920), dans cet ordre
+
+ATTENTION AUX MARQUES
+Dans la fiche (nom, descriptions, captures), évite de citer des titres
+d’anime ou des noms de personnages précis, ainsi que « Undercover » et
+« Mr White » (noms d’un autre jeu existant) : Google refuse souvent les
+fiches qui utilisent des marques. Les captures fournies n’en montrent pas.

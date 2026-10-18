@@ -1,0 +1,8 @@
+{
+  "appId": "fr.underillusion.app",
+  "appName": "UnderIllusion",
+  "webDir": "www",
+  "backgroundColor": "#0F0C1D",
+  "android": { "allowMixedContent": false },
+  "ios": { "contentInset": "never" }
+}
